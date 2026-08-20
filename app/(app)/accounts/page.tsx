@@ -43,7 +43,7 @@ export default function AccountsPage() {
             Saldo total combinado: <span className="font-semibold text-foreground">{formatCurrency(totalBalance)}</span>
           </p>
         </div>
-        <Button onClick={openCreate}>
+        <Button className="self-start sm:self-auto" onClick={openCreate}>
           <MaterialIcon name="add" size={18} />
           Nova conta
         </Button>

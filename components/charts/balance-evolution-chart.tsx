@@ -18,15 +18,16 @@ export function BalanceEvolutionChart({ data }: { data: MonthPoint[] }) {
       <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
         <defs>
           <linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.35} />
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.28} />
             <stop offset="100%" stopColor="var(--accent)" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="4 4" />
+        <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="0" />
         <XAxis
           dataKey="label"
           axisLine={false}
           tickLine={false}
+          tickMargin={10}
           tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
         />
         <YAxis
@@ -37,7 +38,7 @@ export function BalanceEvolutionChart({ data }: { data: MonthPoint[] }) {
           tickFormatter={(v) => formatCompactCurrency(v)}
         />
         <Tooltip
-          cursor={{ stroke: "var(--accent)", strokeWidth: 1, strokeDasharray: "4 4" }}
+          cursor={{ stroke: "var(--accent)", strokeWidth: 1, strokeDasharray: "3 3" }}
           contentStyle={{
             background: "var(--surface)",
             border: "1px solid var(--border)",
@@ -49,11 +50,17 @@ export function BalanceEvolutionChart({ data }: { data: MonthPoint[] }) {
           formatter={(value) => [formatCurrency(Number(value)), "Saldo"]}
         />
         <Area
-          type="monotone"
+          type="natural"
           dataKey="balance"
           stroke="var(--accent)"
-          strokeWidth={2.5}
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
           fill="url(#balanceGradient)"
+          animationDuration={900}
+          animationEasing="ease-out"
+          dot={false}
+          activeDot={{ r: 4, strokeWidth: 0 }}
         />
       </AreaChart>
     </ResponsiveContainer>

@@ -8,7 +8,7 @@ export function IncomeExpenseChart({ data }: { data: MonthPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height={280}>
       <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-        <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="4 4" />
+        <CartesianGrid vertical={false} stroke="var(--border)" />
         <XAxis
           dataKey="label"
           axisLine={false}
@@ -40,8 +40,22 @@ export function IncomeExpenseChart({ data }: { data: MonthPoint[] }) {
           formatter={(value) => (value === "income" ? "Receitas" : "Despesas")}
           wrapperStyle={{ fontSize: 12, color: "var(--muted-foreground)" }}
         />
-        <Bar dataKey="income" fill="var(--success)" radius={[6, 6, 0, 0]} maxBarSize={28} />
-        <Bar dataKey="expense" fill="var(--danger)" radius={[6, 6, 0, 0]} maxBarSize={28} />
+        <Bar
+          dataKey="income"
+          fill="var(--success)"
+          radius={[4, 4, 0, 0]}
+          maxBarSize={24}
+          animationDuration={700}
+          animationEasing="ease-out"
+        />
+        <Bar
+          dataKey="expense"
+          fill="var(--danger)"
+          radius={[4, 4, 0, 0]}
+          maxBarSize={24}
+          animationDuration={700}
+          animationEasing="ease-out"
+        />
       </BarChart>
     </ResponsiveContainer>
   );

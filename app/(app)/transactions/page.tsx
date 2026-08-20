@@ -1,7 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { useFinanceStore } from "@/lib/store";
 import { useToastStore } from "@/lib/toast-store";
 import { formatCurrency, formatDate } from "@/lib/format";
@@ -9,7 +8,7 @@ import { parseLocalDate } from "@/lib/date";
 import type { Transaction, TransactionType } from "@/lib/types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input, Select } from "@/components/ui/input";
+import { Input, Label, Select } from "@/components/ui/input";
 import { IconBadge } from "@/components/ui/icon-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ConfirmModal } from "@/components/ui/modal";
@@ -50,29 +49,29 @@ function getPeriodRange(period: Period, custom: { start: string; end: string }):
 }
 
 export default function TransactionsPage() {
-  return (
-    <Suspense fallback={null}>
-      <TransactionsPageContent />
-    </Suspense>
-  );
-}
-
-function TransactionsPageContent() {
-  const searchParams = useSearchParams();
-  const initialAccountId = searchParams.get("accountId") ?? "all";
-  const initialCategoryId = searchParams.get("categoryId") ?? "all";
-  const hasDeepLinkFilter = initialAccountId !== "all" || initialCategoryId !== "all";
-
   const { transactions, categories, accounts, deleteTransaction } = useFinanceStore((s) => s);
   const showToast = useToastStore((s) => s.show);
 
   const [search, setSearch] = useState("");
   const [type, setType] = useState<"all" | TransactionType>("all");
-  const [categoryId, setCategoryId] = useState(initialCategoryId);
-  const [accountId, setAccountId] = useState(initialAccountId);
-  const [period, setPeriod] = useState<Period>(hasDeepLinkFilter ? "all" : "this-month");
+  const [categoryId, setCategoryId] = useState("all");
+  const [accountId, setAccountId] = useState("all");
+  const [period, setPeriod] = useState<Period>("this-month");
   const [customRange, setCustomRange] = useState({ start: "", end: "" });
   const [sortBy, setSortBy] = useState<SortOption>("date-desc");
+
+  // Picks up ?accountId= / ?categoryId= from a deep link (e.g. clicking through
+  // from an account or category page) once, after mount. Reading the URL is a
+  // genuine external-system sync, not derived state.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const linkedAccountId = params.get("accountId");
+    const linkedCategoryId = params.get("categoryId");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (linkedAccountId) setAccountId(linkedAccountId);
+    if (linkedCategoryId) setCategoryId(linkedCategoryId);
+    if (linkedAccountId || linkedCategoryId) setPeriod("all");
+  }, []);
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Transaction | undefined>(undefined);
@@ -134,6 +133,21 @@ function TransactionsPageContent() {
     <div className="space-y-6">
       <TransactionsTabs />
 
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+          <span className="text-muted-foreground">
+            Receitas: <span className="font-medium text-success">{formatCurrency(totalIncome)}</span>
+          </span>
+          <span className="text-muted-foreground">
+            Despesas: <span className="font-medium text-danger">{formatCurrency(totalExpense)}</span>
+          </span>
+        </div>
+        <Button className="self-start sm:self-auto" onClick={openCreate}>
+          <MaterialIcon name="add" size={18} />
+          Nova transação
+        </Button>
+      </div>
+
       {(filterAccount || filterCategory) && (
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="text-muted-foreground">A filtrar por:</span>
@@ -156,56 +170,55 @@ function TransactionsPageContent() {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4 sm:w-fit sm:grid-cols-2">
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">Receitas (filtro atual)</p>
-          <p className="mt-1 text-lg font-medium text-success">{formatCurrency(totalIncome)}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-xs text-muted-foreground">Despesas (filtro atual)</p>
-          <p className="mt-1 text-lg font-medium text-danger">{formatCurrency(totalExpense)}</p>
-        </Card>
-      </div>
+      <Card className="p-5">
+        <div className="relative">
+          <MaterialIcon
+            name="search"
+            size={18}
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            placeholder="Pesquisar por descrição..."
+            className="pl-10"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
 
-      <Card className="p-4">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative w-full lg:max-w-xs">
-            <MaterialIcon
-              name="search"
-              size={18}
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input
-              placeholder="Pesquisar por descrição..."
-              className="pl-10"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <Select className="w-auto" value={type} onChange={(e) => setType(e.target.value as typeof type)}>
-              <option value="all">Todos os tipos</option>
+        <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 lg:grid-cols-5">
+          <div>
+            <Label htmlFor="filter-type">Tipo</Label>
+            <Select id="filter-type" value={type} onChange={(e) => setType(e.target.value as typeof type)}>
+              <option value="all">Todos</option>
               <option value="income">Receitas</option>
               <option value="expense">Despesas</option>
             </Select>
-            <Select className="w-auto" value={accountId} onChange={(e) => setAccountId(e.target.value)}>
-              <option value="all">Todas as contas</option>
+          </div>
+          <div>
+            <Label htmlFor="filter-account">Conta</Label>
+            <Select id="filter-account" value={accountId} onChange={(e) => setAccountId(e.target.value)}>
+              <option value="all">Todas</option>
               {accounts.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.name}
                 </option>
               ))}
             </Select>
-            <Select className="w-auto" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-              <option value="all">Todas as categorias</option>
+          </div>
+          <div>
+            <Label htmlFor="filter-category">Categoria</Label>
+            <Select id="filter-category" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+              <option value="all">Todas</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
               ))}
             </Select>
-            <Select className="w-auto" value={period} onChange={(e) => setPeriod(e.target.value as Period)}>
+          </div>
+          <div>
+            <Label htmlFor="filter-period">Período</Label>
+            <Select id="filter-period" value={period} onChange={(e) => setPeriod(e.target.value as Period)}>
               <option value="all">Todo o período</option>
               <option value="this-month">Este mês</option>
               <option value="last-month">Mês passado</option>
@@ -214,7 +227,10 @@ function TransactionsPageContent() {
               <option value="this-year">Este ano</option>
               <option value="custom">Personalizado</option>
             </Select>
-            <Select className="w-auto" value={sortBy} onChange={(e) => setSortBy(e.target.value as SortOption)}>
+          </div>
+          <div className="col-span-2 sm:col-span-1">
+            <Label htmlFor="filter-sort">Ordenar por</Label>
+            <Select id="filter-sort" value={sortBy} onChange={(e) => setSortBy(e.target.value as SortOption)}>
               <option value="date-desc">Data (recente)</option>
               <option value="date-asc">Data (antiga)</option>
               <option value="amount-desc">Valor (maior)</option>
@@ -224,7 +240,7 @@ function TransactionsPageContent() {
         </div>
 
         {period === "custom" && (
-          <div className="mt-3 flex flex-wrap items-center gap-2">
+          <div className="mt-4 flex flex-wrap items-center gap-2">
             <Input
               type="date"
               className="w-auto"
@@ -243,16 +259,8 @@ function TransactionsPageContent() {
       </Card>
 
       <Card>
-        <div className="flex items-center justify-between p-5 pb-0">
-          <div>
-            <p className="text-sm font-medium text-foreground">{filtered.length} transações</p>
-          </div>
-          <Button size="sm" onClick={openCreate}>
-            <MaterialIcon name="add" size={16} />
-            Nova transação
-          </Button>
-        </div>
         <div className="p-5">
+          <p className="mb-4 text-sm font-medium text-foreground">{filtered.length} transações</p>
           {filtered.length === 0 ? (
             <EmptyState
               icon="sync_alt"

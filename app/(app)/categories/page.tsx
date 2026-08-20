@@ -45,7 +45,7 @@ export default function CategoriesPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex gap-1 rounded-[var(--radius-md)] border border-border bg-surface p-1">
+        <div className="flex w-fit gap-1 rounded-[var(--radius-md)] border border-border bg-surface p-1">
           {(
             [
               { value: "all", label: "Todas" },
@@ -67,7 +67,7 @@ export default function CategoriesPage() {
             </button>
           ))}
         </div>
-        <Button onClick={openCreate}>
+        <Button className="self-start sm:self-auto" onClick={openCreate}>
           <MaterialIcon name="add" size={18} />
           Nova categoria
         </Button>

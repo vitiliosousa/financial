@@ -57,11 +57,11 @@ export default function RecurringTransactionsPage() {
     <div className="space-y-6">
       <TransactionsTabs />
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted-foreground">
           As transações futuras são geradas automaticamente com base na frequência definida.
         </p>
-        <Button onClick={openCreate}>
+        <Button className="self-start sm:self-auto" onClick={openCreate}>
           <MaterialIcon name="add" size={18} />
           Nova recorrência
         </Button>

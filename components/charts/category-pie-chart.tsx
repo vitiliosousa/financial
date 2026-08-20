@@ -25,8 +25,11 @@ export function CategoryPieChart({ items }: { items: CategoryBreakdownItem[] }) 
               nameKey="category.name"
               innerRadius={46}
               outerRadius={68}
-              paddingAngle={2}
+              paddingAngle={3}
+              cornerRadius={4}
               stroke="none"
+              animationDuration={700}
+              animationEasing="ease-out"
             >
               {items.map((item) => (
                 <Cell key={item.category.id} fill={item.category.color} />

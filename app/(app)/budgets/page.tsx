@@ -59,7 +59,7 @@ export default function BudgetsPage() {
             </p>
           )}
         </div>
-        <Button onClick={openCreate}>
+        <Button className="self-start sm:self-auto" onClick={openCreate}>
           <MaterialIcon name="add" size={18} />
           Novo orçamento
         </Button>

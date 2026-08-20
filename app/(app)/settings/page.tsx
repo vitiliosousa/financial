@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useFinanceStore } from "@/lib/store";
 import { useToastStore } from "@/lib/toast-store";
 import { useTheme } from "@/components/theme-provider";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ColorPicker } from "@/components/ui/color-picker";
@@ -22,6 +21,7 @@ export default function SettingsPage() {
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
   const [avatarColor, setAvatarColor] = useState(user.avatarColor);
+  const [colorPickerOpen, setColorPickerOpen] = useState(false);
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -59,158 +59,153 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <Card>
-        <CardHeader>
-          <div>
-            <CardTitle>Perfil</CardTitle>
-            <CardDescription>Atualize as suas informações pessoais</CardDescription>
+    <div className="max-w-xl">
+      <div className="flex items-center gap-4 pb-8">
+        <div className="relative shrink-0">
+          <div
+            className="flex h-16 w-16 items-center justify-center rounded-full text-xl font-medium text-white"
+            style={{ background: avatarColor }}
+          >
+            {initials}
           </div>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="flex items-center gap-4">
-              <div
-                className="flex h-16 w-16 items-center justify-center rounded-full text-lg font-medium text-white"
-                style={{ background: avatarColor }}
-              >
-                {initials}
-              </div>
-              <div className="flex-1">
-                <Label>Cor do avatar</Label>
-                <ColorPicker value={avatarColor} onChange={setAvatarColor} />
-              </div>
-            </div>
+          <button
+            type="button"
+            onClick={() => setColorPickerOpen((v) => !v)}
+            className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground shadow-sm transition-colors hover:text-foreground"
+            aria-label="Alterar cor do avatar"
+          >
+            <MaterialIcon name="palette" size={13} />
+          </button>
+        </div>
+        <div className="min-w-0">
+          <h1 className="truncate text-lg font-semibold text-foreground">{user.name}</h1>
+          <p className="truncate text-sm text-muted-foreground">{user.email}</p>
+        </div>
+      </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="profile-name">Nome completo</Label>
-                <Input id="profile-name" value={name} onChange={(e) => setName(e.target.value)} required />
-              </div>
-              <div>
-                <Label htmlFor="profile-email">E-mail</Label>
-                <Input
-                  id="profile-email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
+      {colorPickerOpen && (
+        <div className="mb-8">
+          <Label>Cor do avatar</Label>
+          <ColorPicker value={avatarColor} onChange={setAvatarColor} />
+        </div>
+      )}
 
-            <div className="flex justify-end">
-              <Button type="submit">
-                <MaterialIcon name="save" size={18} />
-                Guardar alterações
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      <section className="border-t border-border py-8">
+        <h2 className="text-sm font-semibold text-foreground">Perfil</h2>
+        <p className="mt-1 text-xs text-muted-foreground">Atualize as suas informações pessoais</p>
 
-      <Card>
-        <CardHeader>
-          <div>
-            <CardTitle>Segurança</CardTitle>
-            <CardDescription>Altere a sua palavra-passe de acesso</CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handlePasswordSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <Label htmlFor="current-password">Palavra-passe atual</Label>
+              <Label htmlFor="profile-name">Nome completo</Label>
+              <Input id="profile-name" value={name} onChange={(e) => setName(e.target.value)} required />
+            </div>
+            <div>
+              <Label htmlFor="profile-email">E-mail</Label>
               <Input
-                id="current-password"
+                id="profile-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              Guardar alterações
+            </Button>
+          </div>
+        </form>
+      </section>
+
+      <section className="border-t border-border py-8">
+        <h2 className="text-sm font-semibold text-foreground">Segurança</h2>
+        <p className="mt-1 text-xs text-muted-foreground">Altere a sua palavra-passe de acesso</p>
+
+        <form onSubmit={handlePasswordSubmit} className="mt-5 space-y-4">
+          <div>
+            <Label htmlFor="current-password">Palavra-passe atual</Label>
+            <Input
+              id="current-password"
+              type="password"
+              required
+              placeholder="••••••••"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="new-password">Nova palavra-passe</Label>
+              <Input
+                id="new-password"
                 type="password"
                 required
                 placeholder="••••••••"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
               />
             </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="new-password">Nova palavra-passe</Label>
-                <Input
-                  id="new-password"
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="confirm-new-password">Confirmar nova palavra-passe</Label>
-                <Input
-                  id="confirm-new-password"
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
+            <div>
+              <Label htmlFor="confirm-new-password">Confirmar nova palavra-passe</Label>
+              <Input
+                id="confirm-new-password"
+                type="password"
+                required
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
             </div>
-            {passwordError && <p className="text-xs text-danger">{passwordError}</p>}
-            <div className="flex justify-end">
-              <Button type="submit">
-                <MaterialIcon name="lock_reset" size={18} />
-                Alterar palavra-passe
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+          {passwordError && <p className="text-xs text-danger">{passwordError}</p>}
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              Alterar palavra-passe
+            </Button>
+          </div>
+        </form>
+      </section>
 
-      <Card>
-        <CardHeader>
-          <div>
-            <CardTitle>Aparência</CardTitle>
-            <CardDescription>Personalize o tema da aplicação</CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => setTheme("light")}
-              className={cn(
-                "flex flex-col items-center gap-2 rounded-[var(--radius-md)] border p-4 transition-colors",
-                theme === "light" ? "border-accent bg-accent-soft" : "border-border hover:bg-surface-hover"
-              )}
-            >
-              <MaterialIcon name="light_mode" size={22} />
-              <span className="text-sm font-medium">Claro</span>
-            </button>
-            <button
-              onClick={() => setTheme("dark")}
-              className={cn(
-                "flex flex-col items-center gap-2 rounded-[var(--radius-md)] border p-4 transition-colors",
-                theme === "dark" ? "border-accent bg-accent-soft" : "border-border hover:bg-surface-hover"
-              )}
-            >
-              <MaterialIcon name="dark_mode" size={22} />
-              <span className="text-sm font-medium">Escuro</span>
-            </button>
-          </div>
-        </CardContent>
-      </Card>
+      <section className="border-t border-border py-8">
+        <h2 className="text-sm font-semibold text-foreground">Aparência</h2>
+        <p className="mt-1 text-xs text-muted-foreground">Personalize o tema da aplicação</p>
 
-      <Card>
-        <CardHeader>
-          <div>
-            <CardTitle>Sessão</CardTitle>
-            <CardDescription>Terminar a sessão atual</CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Button variant="outline" onClick={() => router.push("/login")}>
-            <MaterialIcon name="logout" size={18} />
-            Terminar sessão
-          </Button>
-        </CardContent>
-      </Card>
+        <div className="mt-4 inline-flex w-fit gap-1 rounded-[var(--radius-md)] border border-border bg-surface p-1">
+          <button
+            type="button"
+            onClick={() => setTheme("light")}
+            className={cn(
+              "flex items-center gap-2 rounded-[var(--radius-sm)] px-3 py-1.5 text-sm font-medium transition-colors",
+              theme === "light" ? "bg-primary-soft text-foreground" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <MaterialIcon name="light_mode" size={17} />
+            Claro
+          </button>
+          <button
+            type="button"
+            onClick={() => setTheme("dark")}
+            className={cn(
+              "flex items-center gap-2 rounded-[var(--radius-sm)] px-3 py-1.5 text-sm font-medium transition-colors",
+              theme === "dark" ? "bg-primary-soft text-foreground" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <MaterialIcon name="dark_mode" size={17} />
+            Escuro
+          </button>
+        </div>
+      </section>
+
+      <section className="border-t border-border py-8">
+        <h2 className="text-sm font-semibold text-foreground">Sessão</h2>
+        <p className="mt-1 text-xs text-muted-foreground">Terminar a sessão atual neste dispositivo</p>
+        <Button variant="outline" size="sm" className="mt-4" onClick={() => router.push("/login")}>
+          <MaterialIcon name="logout" size={16} />
+          Terminar sessão
+        </Button>
+      </section>
     </div>
   );
 }

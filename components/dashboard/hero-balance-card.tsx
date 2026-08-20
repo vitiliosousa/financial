@@ -14,17 +14,19 @@ export function HeroBalanceCard({
   accountsCount: number;
 }) {
   return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">Saldo total</p>
-        <span className="rounded-[var(--radius-sm)] bg-primary-soft px-2.5 py-1 text-xs font-medium text-muted-foreground">
-          {accountsCount} {accountsCount === 1 ? "conta" : "contas"}
-        </span>
-      </div>
+    <Card className="flex h-full flex-col justify-between p-6">
+      <div>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">Saldo total</p>
+          <span className="rounded-[var(--radius-sm)] bg-primary-soft px-2.5 py-1 text-xs font-medium text-muted-foreground">
+            {accountsCount} {accountsCount === 1 ? "conta" : "contas"}
+          </span>
+        </div>
 
-      <p className="font-tabular mt-2 text-4xl font-semibold tracking-tight text-foreground sm:text-[2.75rem]">
-        {formatCurrency(totalBalance)}
-      </p>
+        <p className="font-tabular mt-2 text-4xl font-semibold tracking-tight text-foreground sm:text-[2.75rem]">
+          {formatCurrency(totalBalance)}
+        </p>
+      </div>
 
       <div className="mt-6 flex items-center gap-6 border-t border-border pt-4">
         <div className="flex items-center gap-2">

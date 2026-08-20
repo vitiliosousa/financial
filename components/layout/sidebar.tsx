@@ -28,7 +28,7 @@ export function Sidebar() {
 
   return (
     <aside className="hidden shrink-0 border-r border-border lg:block">
-      <div className="sticky top-0 flex h-screen w-56 flex-col bg-background p-3">
+      <div className="sticky top-0 flex h-screen w-56 flex-col bg-sidebar-bg p-3">
         <div className="flex items-center gap-2.5 px-2 py-4">
           <div className="flex h-6 w-6 items-center justify-center rounded-[var(--radius-sm)] bg-primary text-primary-foreground">
             <MaterialIcon name="bolt" size={14} filled />

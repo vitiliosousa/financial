@@ -14,6 +14,7 @@ import {
 import { formatCurrency, formatFullMonthLabel } from "@/lib/format";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { HeroBalanceCard } from "@/components/dashboard/hero-balance-card";
+import { QuickLinks } from "@/components/dashboard/quick-links";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BalanceEvolutionChart } from "@/components/charts/balance-evolution-chart";
 import { CategoryPieChart } from "@/components/charts/category-pie-chart";
@@ -62,7 +63,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 lg:h-full">
           <HeroBalanceCard
             totalBalance={totalBalance}
             income={summary.income}
@@ -81,6 +82,8 @@ export default function DashboardPage() {
           <StatCard label="Categorias com despesas" value={String(categoryBreakdown.length)} icon="sell" tone="info" />
         </div>
       </div>
+
+      <QuickLinks />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
