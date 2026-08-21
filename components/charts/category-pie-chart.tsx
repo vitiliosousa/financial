@@ -67,10 +67,10 @@ export function CategoryPieChart({ items }: { items: CategoryBreakdownItem[] }) 
               data={slices}
               dataKey="total"
               nameKey="name"
-              innerRadius={46}
+              innerRadius={42}
               outerRadius={68}
-              paddingAngle={3}
-              cornerRadius={4}
+              paddingAngle={4}
+              cornerRadius={10}
               stroke="none"
               animationDuration={700}
               animationEasing="ease-out"

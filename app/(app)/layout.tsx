@@ -19,7 +19,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <Sidebar />
         <div className="flex min-h-screen min-w-0 flex-1 flex-col">
           <Topbar />
-          <main className="min-w-0 flex-1 px-4 pb-20 pt-6 sm:px-6 lg:px-8 lg:pb-8">
+          <main className="min-w-0 flex-1 px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pb-8">
             <div className="mx-auto min-w-0 max-w-7xl animate-fade-in">{children}</div>
           </main>
         </div>

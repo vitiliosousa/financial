@@ -88,7 +88,11 @@ export default function CategoriesPage() {
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((category) => (
-            <Card key={category.id} className="group flex items-center gap-3 p-4 transition-colors hover:bg-surface-hover">
+            <Card
+              key={category.id}
+              className="group flex items-center gap-3 p-4 transition-transform hover:-translate-y-0.5"
+              style={{ background: `${category.color}29`, borderColor: `${category.color}45` }}
+            >
               <Link
                 href={`/transactions?categoryId=${category.id}`}
                 className="flex min-w-0 flex-1 items-center gap-3"

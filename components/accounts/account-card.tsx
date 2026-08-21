@@ -25,7 +25,10 @@ export function AccountCard({
 }) {
   return (
     <Link href={`/transactions?accountId=${account.id}`} className="block">
-      <Card className="group p-5 transition-colors hover:bg-surface-hover">
+      <Card
+        className="group p-5 transition-transform hover:-translate-y-0.5"
+        style={{ background: `${account.color}29`, borderColor: `${account.color}45` }}
+      >
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <IconBadge icon={account.icon} color={account.color} size="md" />

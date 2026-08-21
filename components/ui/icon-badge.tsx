@@ -26,7 +26,7 @@ export function IconBadge({
   return (
     <div
       className={cn("flex shrink-0 items-center justify-center rounded-full", sizes[size], className)}
-      style={{ background: `${color}1f`, color }}
+      style={{ background: `${color}3d`, color }}
     >
       <DynamicIcon name={icon} size={iconSizes[size]} />
     </div>

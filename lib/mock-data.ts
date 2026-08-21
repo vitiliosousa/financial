@@ -61,22 +61,22 @@ export const ACCOUNTS: Account[] = [
 ];
 
 export const CATEGORIES: Category[] = [
-  { id: "cat-salario", name: "Salário", type: "income", color: "#22c55e", icon: "briefcase" },
-  { id: "cat-freelance", name: "Freelance", type: "income", color: "#14b8a6", icon: "trending-up" },
-  { id: "cat-outros-rend", name: "Outros Rendimentos", type: "income", color: "#84cc16", icon: "coins" },
-  { id: "cat-alimentacao", name: "Alimentação", type: "expense", color: "#f97316", icon: "utensils" },
-  { id: "cat-transporte", name: "Transporte", type: "expense", color: "#3b82f6", icon: "car" },
-  { id: "cat-internet", name: "Internet", type: "expense", color: "#8b5cf6", icon: "wifi" },
-  { id: "cat-lazer", name: "Lazer", type: "expense", color: "#ec4899", icon: "gamepad-2" },
-  { id: "cat-casa", name: "Casa / Renda", type: "expense", color: "#0ea5e9", icon: "home" },
-  { id: "cat-saude", name: "Saúde", type: "expense", color: "#ef4444", icon: "heart-pulse" },
-  { id: "cat-educacao", name: "Educação", type: "expense", color: "#6366f1", icon: "graduation-cap" },
-  { id: "cat-vestuario", name: "Vestuário", type: "expense", color: "#d946ef", icon: "shirt" },
-  { id: "cat-viagens", name: "Viagens", type: "expense", color: "#06b6d4", icon: "plane" },
-  { id: "cat-presentes", name: "Presentes", type: "expense", color: "#f43f5e", icon: "gift" },
-  { id: "cat-compras", name: "Compras", type: "expense", color: "#a855f7", icon: "shopping-cart" },
-  { id: "cat-subscricoes", name: "Subscrições", type: "expense", color: "#64748b", icon: "receipt" },
-  { id: "cat-ginasio", name: "Ginásio", type: "expense", color: "#10b981", icon: "dumbbell" },
+  { id: "cat-salario", name: "Salário", type: "income", color: "#d9a72c", icon: "briefcase" },
+  { id: "cat-freelance", name: "Freelance", type: "income", color: "#6bb3a0", icon: "trending-up" },
+  { id: "cat-outros-rend", name: "Outros Rendimentos", type: "income", color: "#e8c468", icon: "coins" },
+  { id: "cat-alimentacao", name: "Alimentação", type: "expense", color: "#c9694f", icon: "utensils" },
+  { id: "cat-transporte", name: "Transporte", type: "expense", color: "#6fa8dc", icon: "car" },
+  { id: "cat-internet", name: "Internet", type: "expense", color: "#5fa8b8", icon: "wifi" },
+  { id: "cat-lazer", name: "Lazer", type: "expense", color: "#d9738f", icon: "gamepad-2" },
+  { id: "cat-casa", name: "Casa / Renda", type: "expense", color: "#9b6b9e", icon: "home" },
+  { id: "cat-saude", name: "Saúde", type: "expense", color: "#e0916b", icon: "heart-pulse" },
+  { id: "cat-educacao", name: "Educação", type: "expense", color: "#a88fd1", icon: "graduation-cap" },
+  { id: "cat-vestuario", name: "Vestuário", type: "expense", color: "#9a9548", icon: "shirt" },
+  { id: "cat-viagens", name: "Viagens", type: "expense", color: "#8fae6b", icon: "plane" },
+  { id: "cat-presentes", name: "Presentes", type: "expense", color: "#d9738f", icon: "gift" },
+  { id: "cat-compras", name: "Compras", type: "expense", color: "#a88fd1", icon: "shopping-cart" },
+  { id: "cat-subscricoes", name: "Subscrições", type: "expense", color: "#5fa8b8", icon: "receipt" },
+  { id: "cat-ginasio", name: "Ginásio", type: "expense", color: "#e0916b", icon: "dumbbell" },
 ];
 
 function categoryById(id: string) {

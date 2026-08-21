@@ -41,7 +41,7 @@ function GoalForm({ goal, onClose }: { goal?: Goal; onClose: () => void }) {
   const [currentAmount, setCurrentAmount] = useState(goal ? String(goal.currentAmount) : "0");
   const [deadline, setDeadline] = useState(goal?.deadline?.slice(0, 10) ?? "");
   const [icon, setIcon] = useState<IconName>(goal?.icon ?? "target");
-  const [color, setColor] = useState(goal?.color ?? "#6d5ef8");
+  const [color, setColor] = useState(goal?.color ?? "#d9a72c");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

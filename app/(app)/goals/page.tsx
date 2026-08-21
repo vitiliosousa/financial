@@ -62,7 +62,11 @@ export default function GoalsPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {progressList.map((p) => (
-            <Card key={p.goal.id} className="flex flex-col p-5">
+            <Card
+              key={p.goal.id}
+              className="flex flex-col p-5"
+              style={{ background: `${p.goal.color}29`, borderColor: `${p.goal.color}45` }}
+            >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2.5">
                   <IconBadge icon={p.goal.icon} color={p.goal.color} size="lg" />
@@ -110,7 +114,10 @@ export default function GoalsPage() {
                   {!p.isCompleted && <span className="text-muted-foreground">Faltam {formatCurrency(p.remaining)}</span>}
                 </div>
 
-                <div className="mt-4 rounded-[var(--radius-sm)] bg-surface-hover p-3 text-xs">
+                <div
+                  className="mt-4 rounded-[var(--radius-sm)] p-3 text-xs"
+                  style={{ background: `${p.goal.color}3d` }}
+                >
                   {p.isCompleted ? (
                     <div className="flex items-center gap-1.5 font-medium text-success">
                       <MaterialIcon name="check_circle" size={15} filled />

@@ -47,7 +47,7 @@ function AccountForm({ account, onClose }: { account?: Account; onClose: () => v
   const [name, setName] = useState(account?.name ?? "");
   const [type, setType] = useState<Account["type"]>(account?.type ?? "wallet");
   const [icon, setIcon] = useState<IconName>(account?.icon ?? "wallet");
-  const [color, setColor] = useState(account?.color ?? "#6d5ef8");
+  const [color, setColor] = useState(account?.color ?? "#d9a72c");
   const [initialBalance, setInitialBalance] = useState(String(account?.initialBalance ?? 0));
 
   function handleSubmit(e: React.FormEvent) {

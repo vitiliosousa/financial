@@ -50,7 +50,7 @@ function CategoryForm({
   const [name, setName] = useState(category?.name ?? "");
   const [type, setType] = useState<TransactionType>(category?.type ?? defaultType);
   const [icon, setIcon] = useState<IconName>(category?.icon ?? "coins");
-  const [color, setColor] = useState(category?.color ?? "#6d5ef8");
+  const [color, setColor] = useState(category?.color ?? "#d9a72c");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

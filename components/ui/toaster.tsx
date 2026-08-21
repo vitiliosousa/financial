@@ -23,7 +23,7 @@ export function Toaster() {
           )}
           style={{ background: "#18181b", boxShadow: "var(--shadow-2)" }}
         >
-          <MaterialIcon name={icons[toast.tone]} size={18} filled className="text-[#7d95f0]" />
+          <MaterialIcon name={icons[toast.tone]} size={18} filled className="text-[#e8c24d]" />
           <span>{toast.message}</span>
         </div>
       ))}

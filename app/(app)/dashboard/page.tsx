@@ -78,6 +78,7 @@ export default function DashboardPage() {
             icon="savings"
             tone="success"
             trend={{ value: summary.savingsRate, label: "taxa de poupança" }}
+            filled
           />
           <StatCard
             label="Categorias com despesas"
@@ -89,6 +90,7 @@ export default function DashboardPage() {
                 ? `${categoryBreakdown[0].category.name} lidera com ${categoryBreakdown[0].percentage.toFixed(0)}%`
                 : "Sem despesas este mês"
             }
+            filled
           />
         </div>
       </div>
@@ -212,7 +214,11 @@ export default function DashboardPage() {
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {activeGoals.map((g) => (
-                <div key={g.goal.id} className="rounded-[var(--radius-md)] border border-border p-4">
+                <div
+                  key={g.goal.id}
+                  className="rounded-[var(--radius-md)] border p-4"
+                  style={{ background: `${g.goal.color}29`, borderColor: `${g.goal.color}45` }}
+                >
                   <div className="mb-3 flex items-center gap-2.5">
                     <IconBadge icon={g.goal.icon} color={g.goal.color} size="sm" />
                     <span className="truncate text-sm font-medium text-foreground">{g.goal.name}</span>

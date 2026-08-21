@@ -20,6 +20,8 @@ export function IconPicker({
           key={name}
           type="button"
           onClick={() => onChange(name)}
+          aria-label={name.replace(/-/g, " ")}
+          aria-pressed={value === name}
           className={cn(
             "flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] transition-all",
             value === name ? "ring-2 ring-offset-1 ring-offset-surface" : "hover:bg-surface-hover"

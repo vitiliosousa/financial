@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { cn } from "@/lib/cn";
 
 export function MaterialIcon({
@@ -6,12 +7,14 @@ export function MaterialIcon({
   size = 20,
   filled = false,
   weight = 400,
+  style,
 }: {
   name: string;
   className?: string;
   size?: number;
   filled?: boolean;
   weight?: 300 | 400 | 500 | 600;
+  style?: CSSProperties;
 }) {
   return (
     <span
@@ -21,6 +24,7 @@ export function MaterialIcon({
         width: size,
         height: size,
         fontVariationSettings: `'FILL' ${filled ? 1 : 0}, 'wght' ${weight}, 'GRAD' 0, 'opsz' ${size}`,
+        ...style,
       }}
       aria-hidden="true"
     >

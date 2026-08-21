@@ -1,6 +1,7 @@
 import { formatCurrency } from "@/lib/format";
 import { Card } from "@/components/ui/card";
 import { MaterialIcon } from "@/components/ui/material-icon";
+import { FILL_COLORS, FILL_ICON_COLORS } from "./stat-card";
 
 export function HeroBalanceCard({
   totalBalance,
@@ -14,11 +15,24 @@ export function HeroBalanceCard({
   accountsCount: number;
 }) {
   return (
-    <Card className="flex h-full flex-col justify-between p-6">
-      <div>
+    <Card
+      className="relative flex h-full flex-col justify-between overflow-hidden p-6"
+      style={{ background: FILL_COLORS.primary, borderColor: "transparent" }}
+    >
+      <MaterialIcon
+        name="account_balance_wallet"
+        size={140}
+        filled
+        className="pointer-events-none absolute -bottom-6 -right-6 opacity-[0.14]"
+        style={{ color: FILL_ICON_COLORS.primary }}
+      />
+      <div className="relative">
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">Saldo total</p>
-          <span className="rounded-[var(--radius-sm)] bg-primary-soft px-2.5 py-1 text-xs font-medium text-muted-foreground">
+          <span
+            className="rounded-[var(--radius-sm)] px-2.5 py-1 text-xs font-medium"
+            style={{ background: "rgba(255,255,255,0.5)", color: FILL_ICON_COLORS.primary }}
+          >
             {accountsCount} {accountsCount === 1 ? "conta" : "contas"}
           </span>
         </div>
@@ -28,7 +42,7 @@ export function HeroBalanceCard({
         </p>
       </div>
 
-      <div className="mt-6 flex items-center gap-6 border-t border-border pt-4">
+      <div className="relative mt-6 flex items-center gap-6 border-t border-primary/10 pt-4">
         <div className="flex items-center gap-2">
           <MaterialIcon name="arrow_upward" size={16} className="text-success" />
           <div>
