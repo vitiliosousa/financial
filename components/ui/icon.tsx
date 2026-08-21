@@ -27,6 +27,7 @@ export const ICON_MAP: Record<IconName, string> = {
   sparkles: "auto_awesome",
   dumbbell: "fitness_center",
   dog: "pets",
+  "more-horizontal": "more_horiz",
 };
 
 export const ICON_NAMES = Object.keys(ICON_MAP) as IconName[];

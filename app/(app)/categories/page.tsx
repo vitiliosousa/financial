@@ -67,7 +67,7 @@ export default function CategoriesPage() {
             </button>
           ))}
         </div>
-        <Button className="self-start sm:self-auto" onClick={openCreate}>
+        <Button className="self-end sm:self-auto" onClick={openCreate}>
           <MaterialIcon name="add" size={18} />
           Nova categoria
         </Button>
@@ -107,6 +107,7 @@ export default function CategoriesPage() {
                   size="icon"
                   className="h-8 w-8 text-muted-foreground hover:bg-surface hover:text-foreground"
                   onClick={() => openEdit(category)}
+                  aria-label="Editar categoria"
                 >
                   <MaterialIcon name="edit" size={16} />
                 </Button>
@@ -115,6 +116,7 @@ export default function CategoriesPage() {
                   size="icon"
                   className="h-8 w-8 text-muted-foreground hover:bg-danger-soft hover:text-danger"
                   onClick={() => setDeleting(category)}
+                  aria-label="Eliminar categoria"
                 >
                   <MaterialIcon name="delete" size={16} />
                 </Button>

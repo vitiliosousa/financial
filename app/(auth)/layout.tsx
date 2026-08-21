@@ -1,15 +1,18 @@
 import Link from "next/link";
-import { MaterialIcon } from "@/components/ui/material-icon";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import { Logo } from "@/components/ui/logo";
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
+  if (session?.user?.id) redirect("/dashboard");
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-sm animate-fade-in">
-        <Link href="/login" className="mb-8 flex items-center justify-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
-            <MaterialIcon name="bolt" size={20} filled />
-          </div>
-          <span className="text-lg font-bold text-foreground">Finanças</span>
+        <Link href="/login" className="mb-8 flex items-center justify-center gap-2.5 text-foreground">
+          <Logo width={30} height={24} />
+          <span className="text-lg font-bold text-foreground">Onazi</span>
         </Link>
         {children}
       </div>

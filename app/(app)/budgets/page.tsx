@@ -59,7 +59,7 @@ export default function BudgetsPage() {
             </p>
           )}
         </div>
-        <Button className="self-start sm:self-auto" onClick={openCreate}>
+        <Button className="self-end sm:self-auto" onClick={openCreate}>
           <MaterialIcon name="add" size={18} />
           Novo orçamento
         </Button>
@@ -94,6 +94,7 @@ export default function BudgetsPage() {
                       size="icon"
                       className="h-7 w-7 text-muted-foreground hover:bg-surface-hover hover:text-foreground"
                       onClick={() => openEdit(u.budget)}
+                      aria-label="Editar orçamento"
                     >
                       <MaterialIcon name="edit" size={15} />
                     </Button>
@@ -102,6 +103,7 @@ export default function BudgetsPage() {
                       size="icon"
                       className="h-7 w-7 text-muted-foreground hover:bg-danger-soft hover:text-danger"
                       onClick={() => setDeleting(u.budget)}
+                      aria-label="Eliminar orçamento"
                     >
                       <MaterialIcon name="delete" size={15} />
                     </Button>

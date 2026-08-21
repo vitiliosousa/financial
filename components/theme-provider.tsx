@@ -23,7 +23,13 @@ const THEME_INIT_SCRIPT = `
 `;
 
 export function ThemeInitScript() {
-  return <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />;
+  return (
+    <script
+      type={typeof window === "undefined" ? "text/javascript" : "text/plain"}
+      suppressHydrationWarning
+      dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+    />
+  );
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {

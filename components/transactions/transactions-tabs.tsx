@@ -13,13 +13,13 @@ const TABS = [
 export function TransactionsTabs() {
   const pathname = usePathname();
   return (
-    <div className="flex w-fit gap-1 rounded-[var(--radius-md)] border border-border bg-surface p-1">
+    <div className="flex w-full gap-1 rounded-[var(--radius-md)] border border-border bg-surface p-1 sm:w-fit">
       {TABS.map((tab) => (
         <Link
           key={tab.href}
           href={tab.href}
           className={cn(
-            "flex items-center gap-1.5 rounded-[var(--radius-sm)] px-3 py-1.5 text-sm font-medium transition-colors",
+            "flex flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-sm)] px-3 py-1.5 text-sm font-medium transition-colors sm:flex-none",
             pathname === tab.href ? "bg-primary-soft text-foreground" : "text-muted-foreground hover:text-foreground"
           )}
         >

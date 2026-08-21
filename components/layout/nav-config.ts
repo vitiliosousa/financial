@@ -21,12 +21,15 @@ export const SETTINGS_ITEM: NavItem = {
   icon: "settings",
 };
 
-// Bottom nav on mobile only has room for a handful of items; the rest live
-// behind the "Mais" sheet.
+// Bottom nav on mobile only has room for a handful of items — the rest
+// (Contas, Categorias, Relatórios, Definições) live as shortcuts on the
+// Dashboard instead. The remaining four split two-and-two around the
+// centered "+" quick-add button.
 export const MOBILE_PRIMARY_HREFS = ["/dashboard", "/transactions", "/budgets", "/goals"];
 
 export const MOBILE_PRIMARY_ITEMS = NAV_ITEMS.filter((item) => MOBILE_PRIMARY_HREFS.includes(item.href));
-export const MOBILE_MORE_ITEMS = [
-  ...NAV_ITEMS.filter((item) => !MOBILE_PRIMARY_HREFS.includes(item.href)),
-  SETTINGS_ITEM,
-];
+
+// Pages that aren't reachable from the bottom nav directly — only via a
+// Dashboard shortcut or the desktop sidebar — show a back arrow in the
+// header so there's always an obvious way out, especially on mobile.
+export const SECONDARY_HREFS = ["/accounts", "/categories", "/reports", "/settings"];

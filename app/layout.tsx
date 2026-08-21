@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeInitScript, ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
@@ -16,8 +16,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Finanças | Controlo Financeiro Pessoal",
+  title: "Onazi | Controlo Financeiro Pessoal",
   description: "Acompanhe receitas, despesas, contas, orçamentos e metas financeiras.",
+  appleWebApp: {
+    capable: true,
+    title: "Onazi",
+    statusBarStyle: "default",
+  },
+  icons: {
+    apple: "/icons/apple-touch-icon.png",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#191919" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

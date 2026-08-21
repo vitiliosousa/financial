@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { cn } from "@/lib/cn";
 import { NAV_ITEMS, SETTINGS_ITEM } from "./nav-config";
 import { MaterialIcon } from "@/components/ui/material-icon";
+import { Logo } from "@/components/ui/logo";
 
 function NavLink({ item, active }: { item: (typeof NAV_ITEMS)[number]; active: boolean }) {
   return (
@@ -27,13 +29,11 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden shrink-0 border-r border-border lg:block">
-      <div className="sticky top-0 flex h-screen w-56 flex-col bg-sidebar-bg p-3">
-        <div className="flex items-center gap-2.5 px-2 py-4">
-          <div className="flex h-6 w-6 items-center justify-center rounded-[var(--radius-sm)] bg-primary text-primary-foreground">
-            <MaterialIcon name="bolt" size={14} filled />
-          </div>
-          <p className="text-sm font-semibold leading-tight text-foreground">Finanças</p>
+    <aside className="hidden shrink-0 lg:block lg:w-56">
+      <div className="fixed inset-y-0 left-0 flex w-56 flex-col border-r border-border bg-sidebar-bg p-3">
+        <div className="flex items-center gap-2 px-2 py-4">
+          <Logo width={22} height={18} className="text-foreground" />
+          <p className="text-sm font-semibold leading-tight text-foreground">Onazi</p>
         </div>
 
         <nav className="mt-3 flex-1 space-y-0.5 overflow-y-auto">
@@ -44,13 +44,14 @@ export function Sidebar() {
 
         <div className="space-y-0.5 border-t border-border pt-2">
           <NavLink item={SETTINGS_ITEM} active={pathname === SETTINGS_ITEM.href} />
-          <Link
-            href="/login"
-            className="flex items-center gap-2.5 rounded-[var(--radius-sm)] px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="flex w-full items-center gap-2.5 rounded-[var(--radius-sm)] px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
           >
             <MaterialIcon name="logout" size={18} />
             Terminar sessão
-          </Link>
+          </button>
         </div>
       </div>
     </aside>

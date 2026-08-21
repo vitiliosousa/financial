@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { MaterialIcon } from "@/components/ui/material-icon";
 import { cn } from "@/lib/cn";
@@ -8,12 +9,14 @@ export function StatCard({
   icon,
   tone = "primary",
   trend,
+  footer,
 }: {
   label: string;
   value: string;
   icon: string;
   tone?: "primary" | "success" | "danger" | "info";
   trend?: { value: number; label: string };
+  footer?: ReactNode;
 }) {
   const toneClasses = {
     primary: "bg-primary-soft text-primary",
@@ -47,6 +50,7 @@ export function StatCard({
           <span className="text-muted-foreground">{trend.label}</span>
         </div>
       )}
+      {footer && <div className="mt-3 text-xs text-muted-foreground">{footer}</div>}
     </Card>
   );
 }

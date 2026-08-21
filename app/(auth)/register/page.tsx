@@ -2,21 +2,49 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
+import { registerAction } from "@/lib/actions/auth";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
+
+    if (password !== confirmPassword) {
+      setError("As palavras-passe não coincidem.");
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 500);
+    try {
+      await registerAction({ name: name.trim(), email: email.trim(), password });
+    } catch (err) {
+      setLoading(false);
+      setError(err instanceof Error ? err.message : "Não foi possível criar a conta.");
+      return;
+    }
+
+    const result = await signIn("credentials", { email, password, redirect: false });
+    if (result?.error) {
+      setLoading(false);
+      setError("Conta criada, mas não foi possível iniciar sessão. Tente entrar manualmente.");
+      return;
+    }
+    router.push("/dashboard");
+    router.refresh();
   }
 
   return (
@@ -30,7 +58,13 @@ export default function RegisterPage() {
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <div>
             <Label htmlFor="name">Nome completo</Label>
-            <Input id="name" required placeholder="O seu nome" defaultValue="Vitílio Martins" />
+            <Input
+              id="name"
+              required
+              placeholder="O seu nome"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
           </div>
           <div>
             <Label htmlFor="email">E-mail</Label>
@@ -39,17 +73,33 @@ export default function RegisterPage() {
               type="email"
               required
               placeholder="ola@exemplo.com"
-              defaultValue="vitiliomartins2003@gmail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div>
             <Label htmlFor="password">Palavra-passe</Label>
-            <Input id="password" type="password" required placeholder="••••••••" />
+            <PasswordInput
+              id="password"
+              required
+              minLength={8}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
           <div>
             <Label htmlFor="confirm-password">Confirmar palavra-passe</Label>
-            <Input id="confirm-password" type="password" required placeholder="••••••••" />
+            <PasswordInput
+              id="confirm-password"
+              required
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
           </div>
+
+          {error && <p className="text-xs text-danger">{error}</p>}
 
           <Button type="submit" className="w-full" loading={loading}>
             Criar conta

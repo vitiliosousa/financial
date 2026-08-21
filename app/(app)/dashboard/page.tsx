@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import { MaterialIcon } from "@/components/ui/material-icon";
 
 export default function DashboardPage() {
-  const { accounts, categories, transactions, budgets, goals } = useFinanceStore((s) => s);
+  const { accounts, categories, transactions, transfers, budgets, goals } = useFinanceStore((s) => s);
 
   const now = new Date();
   const month = now.getMonth();
@@ -35,7 +35,7 @@ export default function DashboardPage() {
 
   const monthTransactions = getTransactionsForMonth(transactions, month, year);
   const summary = getMonthSummary(monthTransactions);
-  const totalBalance = getTotalBalance(accounts, transactions);
+  const totalBalance = getTotalBalance(accounts, transactions, transfers);
   const evolution = getBalanceEvolution(accounts, transactions, 6);
   const categoryBreakdown = getCategoryBreakdown(monthTransactions, categories, "expense");
 
@@ -79,7 +79,17 @@ export default function DashboardPage() {
             tone="success"
             trend={{ value: summary.savingsRate, label: "taxa de poupança" }}
           />
-          <StatCard label="Categorias com despesas" value={String(categoryBreakdown.length)} icon="sell" tone="info" />
+          <StatCard
+            label="Categorias com despesas"
+            value={String(categoryBreakdown.length)}
+            icon="sell"
+            tone="info"
+            footer={
+              categoryBreakdown[0]
+                ? `${categoryBreakdown[0].category.name} lidera com ${categoryBreakdown[0].percentage.toFixed(0)}%`
+                : "Sem despesas este mês"
+            }
+          />
         </div>
       </div>
 

@@ -10,7 +10,7 @@ const LINKS = [
 
 export function QuickLinks() {
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:hidden">
       {LINKS.map((link) => (
         <Link
           key={link.href}

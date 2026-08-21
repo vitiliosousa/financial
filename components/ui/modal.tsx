@@ -53,7 +53,13 @@ export function Modal({
             <h2 className="text-base font-semibold text-foreground">{title}</h2>
             {description && <p className="mt-1 text-xs text-muted-foreground">{description}</p>}
           </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8 -mr-2 -mt-1" onClick={onClose}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 -mr-2 -mt-1"
+            onClick={onClose}
+            aria-label="Fechar"
+          >
             <MaterialIcon name="close" size={18} />
           </Button>
         </div>

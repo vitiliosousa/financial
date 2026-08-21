@@ -1,15 +1,30 @@
 import { parseLocalDate } from "./date";
-import type { Account, Budget, Category, Goal, Transaction } from "./types";
+import type { Account, Budget, Category, Goal, Transaction, Transfer } from "./types";
 
-export function getAccountBalance(account: Account, transactions: Transaction[]): number {
-  const delta = transactions
+export function getAccountBalance(
+  account: Account,
+  transactions: Transaction[],
+  transfers: Transfer[] = []
+): number {
+  const txDelta = transactions
     .filter((t) => t.accountId === account.id)
     .reduce((sum, t) => sum + (t.type === "income" ? t.amount : -t.amount), 0);
-  return account.initialBalance + delta;
+  const transferDelta = transfers.reduce((sum, t) => {
+    if (t.fromId === account.id) return sum - t.amount;
+    if (t.toId === account.id) return sum + t.amount;
+    return sum;
+  }, 0);
+  return account.initialBalance + txDelta + transferDelta;
 }
 
-export function getTotalBalance(accounts: Account[], transactions: Transaction[]): number {
-  return accounts.reduce((sum, a) => sum + getAccountBalance(a, transactions), 0);
+export function getTotalBalance(
+  accounts: Account[],
+  transactions: Transaction[],
+  transfers: Transfer[] = []
+): number {
+  // Transfers move money between the user's own accounts, so they always net
+  // to zero across the combined total — only per-account balances need them.
+  return accounts.reduce((sum, a) => sum + getAccountBalance(a, transactions, transfers), 0);
 }
 
 export function isInMonth(dateStr: string, month: number, year: number): boolean {

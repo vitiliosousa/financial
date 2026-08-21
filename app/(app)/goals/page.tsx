@@ -79,6 +79,7 @@ export default function GoalsPage() {
                     size="icon"
                     className="h-7 w-7 text-muted-foreground hover:bg-surface-hover hover:text-foreground"
                     onClick={() => openEdit(p.goal)}
+                    aria-label="Editar meta"
                   >
                     <MaterialIcon name="edit" size={15} />
                   </Button>
@@ -87,6 +88,7 @@ export default function GoalsPage() {
                     size="icon"
                     className="h-7 w-7 text-muted-foreground hover:bg-danger-soft hover:text-danger"
                     onClick={() => setDeleting(p.goal)}
+                    aria-label="Eliminar meta"
                   >
                     <MaterialIcon name="delete" size={15} />
                   </Button>

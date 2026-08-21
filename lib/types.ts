@@ -27,7 +27,8 @@ export type IconName =
   | "plus-circle"
   | "sparkles"
   | "dumbbell"
-  | "dog";
+  | "dog"
+  | "more-horizontal";
 
 export interface Account {
   id: string;
@@ -70,6 +71,15 @@ export interface RecurringTransaction {
   endDate?: string;
   active: boolean;
   lastGeneratedDate?: string;
+}
+
+export interface Transfer {
+  id: string;
+  fromId: string;
+  toId: string;
+  amount: number;
+  date: string; // ISO date string
+  description?: string;
 }
 
 export interface Budget {

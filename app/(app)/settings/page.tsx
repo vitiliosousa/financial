@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { useFinanceStore } from "@/lib/store";
 import { useToastStore } from "@/lib/toast-store";
 import { useTheme } from "@/components/theme-provider";
@@ -10,9 +10,9 @@ import { Button } from "@/components/ui/button";
 import { ColorPicker } from "@/components/ui/color-picker";
 import { MaterialIcon } from "@/components/ui/material-icon";
 import { cn } from "@/lib/cn";
+import { changePasswordAction } from "@/lib/actions/user";
 
 export default function SettingsPage() {
-  const router = useRouter();
   const user = useFinanceStore((s) => s.user);
   const updateUser = useFinanceStore((s) => s.updateUser);
   const showToast = useToastStore((s) => s.show);
@@ -41,7 +41,7 @@ export default function SettingsPage() {
     showToast("Perfil atualizado com sucesso.");
   }
 
-  function handlePasswordSubmit(e: React.FormEvent) {
+  async function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (newPassword.length < 8) {
       setPasswordError("A nova palavra-passe deve ter pelo menos 8 caracteres.");
@@ -49,6 +49,12 @@ export default function SettingsPage() {
     }
     if (newPassword !== confirmPassword) {
       setPasswordError("As palavras-passe não coincidem.");
+      return;
+    }
+    try {
+      await changePasswordAction({ currentPassword, newPassword });
+    } catch (err) {
+      setPasswordError(err instanceof Error ? err.message : "Erro ao alterar palavra-passe.");
       return;
     }
     setPasswordError(null);
@@ -201,7 +207,7 @@ export default function SettingsPage() {
       <section className="border-t border-border py-8">
         <h2 className="text-sm font-semibold text-foreground">Sessão</h2>
         <p className="mt-1 text-xs text-muted-foreground">Terminar a sessão atual neste dispositivo</p>
-        <Button variant="outline" size="sm" className="mt-4" onClick={() => router.push("/login")}>
+        <Button variant="outline" size="sm" className="mt-4" onClick={() => signOut({ callbackUrl: "/login" })}>
           <MaterialIcon name="logout" size={16} />
           Terminar sessão
         </Button>

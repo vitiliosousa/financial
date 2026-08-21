@@ -1,0 +1,157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  avatarColor  String   @default("#3E63DD")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  accounts     Account[]
+  categories   Category[]
+  transactions Transaction[]
+  recurring    RecurringTransaction[]
+  budgets      Budget[]
+  goals        Goal[]
+  transfers    Transfer[]
+}
+
+model Account {
+  id             String   @id @default(cuid())
+  userId         String
+  name           String
+  type           String
+  icon           String
+  color          String
+  initialBalance Decimal  @default(0) @db.Decimal(14, 2)
+  createdAt      DateTime @default(now())
+
+  user          User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions  Transaction[]
+  recurring     RecurringTransaction[]
+  transfersFrom Transfer[]             @relation("TransferFrom")
+  transfersTo   Transfer[]             @relation("TransferTo")
+
+  @@index([userId])
+}
+
+model Transfer {
+  id          String   @id @default(cuid())
+  userId      String
+  fromId      String
+  toId        String
+  amount      Decimal  @db.Decimal(14, 2)
+  date        DateTime
+  description String?
+  createdAt   DateTime @default(now())
+
+  user User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  from Account @relation("TransferFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to   Account @relation("TransferTo", fields: [toId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Category {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+  type   String
+  color  String
+  icon   String
+
+  user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  recurring    RecurringTransaction[]
+  budgets      Budget[]
+
+  @@index([userId])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  amount      Decimal  @db.Decimal(14, 2)
+  categoryId  String
+  accountId   String
+  date        DateTime
+  description String?
+  recurringId String?
+  createdAt   DateTime @default(now())
+
+  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category  Category              @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  account   Account               @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  recurring RecurringTransaction? @relation(fields: [recurringId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([userId, date])
+  @@index([accountId])
+  @@index([categoryId])
+}
+
+model RecurringTransaction {
+  id                String    @id @default(cuid())
+  userId            String
+  type              String
+  amount            Decimal   @db.Decimal(14, 2)
+  categoryId        String
+  accountId         String
+  description       String?
+  frequency         String
+  startDate         DateTime
+  endDate           DateTime?
+  active            Boolean   @default(true)
+  lastGeneratedDate DateTime?
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category     Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  account      Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([userId])
+}
+
+model Budget {
+  id         String  @id @default(cuid())
+  userId     String
+  categoryId String
+  limit      Decimal @db.Decimal(14, 2)
+  month      Int
+  year       Int
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, categoryId, month, year])
+  @@index([userId])
+}
+
+model Goal {
+  id            String    @id @default(cuid())
+  userId        String
+  name          String
+  icon          String
+  color         String
+  targetAmount  Decimal   @db.Decimal(14, 2)
+  currentAmount Decimal   @default(0) @db.Decimal(14, 2)
+  deadline      DateTime?
+  createdAt     DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

@@ -61,7 +61,7 @@ export default function RecurringTransactionsPage() {
         <p className="text-sm text-muted-foreground">
           As transações futuras são geradas automaticamente com base na frequência definida.
         </p>
-        <Button className="self-start sm:self-auto" onClick={openCreate}>
+        <Button className="self-end sm:self-auto" onClick={openCreate}>
           <MaterialIcon name="add" size={18} />
           Nova recorrência
         </Button>
@@ -119,6 +119,7 @@ export default function RecurringTransactionsPage() {
                     size="icon"
                     className="h-8 w-8 text-muted-foreground hover:bg-surface-hover hover:text-foreground"
                     onClick={() => openEdit(rec)}
+                    aria-label="Editar transação recorrente"
                   >
                     <MaterialIcon name="edit" size={16} />
                   </Button>
@@ -127,6 +128,7 @@ export default function RecurringTransactionsPage() {
                     size="icon"
                     className="h-8 w-8 text-muted-foreground hover:bg-danger-soft hover:text-danger"
                     onClick={() => setDeleting(rec)}
+                    aria-label="Eliminar transação recorrente"
                   >
                     <MaterialIcon name="delete" size={16} />
                   </Button>
