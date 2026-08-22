@@ -79,6 +79,14 @@ export default function TransactionsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Transaction | undefined>(undefined);
   const [deleting, setDeleting] = useState<Transaction | undefined>(undefined);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const activeFilterCount =
+    (type !== "all" ? 1 : 0) +
+    (accountId !== "all" ? 1 : 0) +
+    (categoryId !== "all" ? 1 : 0) +
+    (period !== "this-month" ? 1 : 0) +
+    (sortBy !== "date-desc" ? 1 : 0);
 
   function resetToFirstPage() {
     setPage(1);
@@ -194,27 +202,46 @@ export default function TransactionsPage() {
       )}
 
       <Card className="w-full min-w-0 p-5">
-        <div className="w-full min-w-0">
-          <Label htmlFor="tx-search">Pesquisar</Label>
-          <div className="relative w-full min-w-0">
-            <MaterialIcon
-              name="search"
-              size={18}
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input
-              id="tx-search"
-              placeholder="Pesquisar por descrição..."
-              className="w-full pl-10"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                resetToFirstPage();
-              }}
-            />
+        <div className="flex w-full min-w-0 items-end gap-2">
+          <div className="w-full min-w-0 flex-1">
+            <Label htmlFor="tx-search">Pesquisar</Label>
+            <div className="relative w-full min-w-0">
+              <MaterialIcon
+                name="search"
+                size={18}
+                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
+              <Input
+                id="tx-search"
+                placeholder="Pesquisar por descrição..."
+                className="w-full pl-10"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  resetToFirstPage();
+                }}
+              />
+            </div>
           </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="relative shrink-0"
+            onClick={() => setFiltersOpen((v) => !v)}
+            aria-expanded={filtersOpen}
+          >
+            <MaterialIcon name="tune" size={18} />
+            Filtros
+            {activeFilterCount > 0 && (
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white">
+                {activeFilterCount}
+              </span>
+            )}
+          </Button>
         </div>
 
+        {filtersOpen && (
+        <>
         <div className="mt-4 flex w-full min-w-0 flex-col gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-4">
           <div className="w-full min-w-0">
             <Label htmlFor="filter-type">Tipo</Label>
@@ -340,6 +367,8 @@ export default function TransactionsPage() {
             <option value="amount-asc">Valor (menor)</option>
           </Select>
         </div>
+        </>
+        )}
       </Card>
 
       <Card className="w-full min-w-0">

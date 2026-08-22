@@ -25,10 +25,7 @@ export function AccountCard({
 }) {
   return (
     <Link href={`/transactions?accountId=${account.id}`} className="block">
-      <Card
-        className="group p-5 transition-transform hover:-translate-y-0.5"
-        style={{ background: `${account.color}29`, borderColor: `${account.color}45` }}
-      >
+      <Card className="p-5 transition-colors hover:bg-surface-hover">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <IconBadge icon={account.icon} color={account.color} size="md" />
@@ -37,7 +34,7 @@ export function AccountCard({
               <p className="text-xs text-muted-foreground">{TYPE_LABELS[account.type]}</p>
             </div>
           </div>
-          <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="flex gap-1">
             <button
               onClick={(e) => {
                 e.preventDefault();

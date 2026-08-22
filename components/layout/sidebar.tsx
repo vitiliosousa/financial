@@ -15,8 +15,8 @@ function NavLink({ item, active }: { item: (typeof NAV_ITEMS)[number]; active: b
       className={cn(
         "group flex items-center gap-2.5 rounded-[var(--radius-sm)] px-3 py-2 text-sm transition-colors",
         active
-          ? "bg-primary-foreground/10 font-medium text-primary-foreground"
-          : "text-primary-foreground/55 font-normal hover:bg-primary-foreground/10 hover:text-primary-foreground"
+          ? "bg-nav-fg/10 font-medium text-nav-fg"
+          : "text-nav-fg/55 font-normal hover:bg-nav-fg/10 hover:text-nav-fg"
       )}
     >
       <MaterialIcon name={item.icon} size={18} />
@@ -30,10 +30,10 @@ export function Sidebar() {
 
   return (
     <aside className="hidden shrink-0 lg:block lg:w-56">
-      <div className="fixed inset-y-0 left-0 flex w-56 flex-col bg-primary p-3">
+      <div className="fixed inset-y-0 left-0 flex w-56 flex-col bg-nav-bg p-3">
         <div className="flex items-center gap-2 px-2 py-4">
-          <Logo width={22} height={18} className="text-primary-foreground" />
-          <p className="text-sm font-semibold leading-tight text-primary-foreground">Onazi</p>
+          <Logo width={22} height={18} className="text-nav-fg" />
+          <p className="text-sm font-semibold leading-tight text-nav-fg">Onazi</p>
         </div>
 
         <nav className="mt-3 flex-1 space-y-0.5 overflow-y-auto">
@@ -42,12 +42,12 @@ export function Sidebar() {
           ))}
         </nav>
 
-        <div className="space-y-0.5 border-t border-primary-foreground/10 pt-2">
+        <div className="space-y-0.5 border-t border-nav-fg/10 pt-2">
           <NavLink item={SETTINGS_ITEM} active={pathname === SETTINGS_ITEM.href} />
           <button
             type="button"
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="flex w-full items-center gap-2.5 rounded-[var(--radius-sm)] px-3 py-2 text-sm text-primary-foreground/55 transition-colors hover:bg-primary-foreground/10 hover:text-primary-foreground"
+            className="flex w-full items-center gap-2.5 rounded-[var(--radius-sm)] px-3 py-2 text-sm text-nav-fg/55 transition-colors hover:bg-nav-fg/10 hover:text-nav-fg"
           >
             <MaterialIcon name="logout" size={18} />
             Terminar sessão

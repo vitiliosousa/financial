@@ -1,7 +1,8 @@
 import { formatCurrency } from "@/lib/format";
 import { Card } from "@/components/ui/card";
 import { MaterialIcon } from "@/components/ui/material-icon";
-import { FILL_COLORS, FILL_ICON_COLORS } from "./stat-card";
+import { TONE_VARS } from "./stat-card";
+import { pastelFill } from "@/lib/pastel";
 
 export function HeroBalanceCard({
   totalBalance,
@@ -17,21 +18,21 @@ export function HeroBalanceCard({
   return (
     <Card
       className="relative flex h-full flex-col justify-between overflow-hidden p-6"
-      style={{ background: FILL_COLORS.primary, borderColor: "transparent" }}
+      style={{ background: pastelFill(TONE_VARS.primary), borderColor: "transparent" }}
     >
       <MaterialIcon
         name="account_balance_wallet"
         size={140}
         filled
-        className="pointer-events-none absolute -bottom-6 -right-6 opacity-[0.14]"
-        style={{ color: FILL_ICON_COLORS.primary }}
+        className="pointer-events-none absolute -bottom-6 -right-6 opacity-[0.18]"
+        style={{ color: TONE_VARS.primary }}
       />
       <div className="relative">
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">Saldo total</p>
           <span
             className="rounded-[var(--radius-sm)] px-2.5 py-1 text-xs font-medium"
-            style={{ background: "rgba(255,255,255,0.5)", color: FILL_ICON_COLORS.primary }}
+            style={{ background: "color-mix(in srgb, var(--surface) 60%, transparent)", color: TONE_VARS.primary }}
           >
             {accountsCount} {accountsCount === 1 ? "conta" : "contas"}
           </span>

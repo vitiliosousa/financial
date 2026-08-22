@@ -2,19 +2,16 @@ import type { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { MaterialIcon } from "@/components/ui/material-icon";
 import { cn } from "@/lib/cn";
+import { pastelFill } from "@/lib/pastel";
 
-export const FILL_COLORS = {
-  primary: "#f5e2a3",
-  success: "#dceacb",
-  danger: "#f5dcd2",
-  info: "#d9e8f5",
-};
-
-export const FILL_ICON_COLORS = {
-  primary: "#8a6812",
-  success: "#457035",
-  danger: "#a8412a",
-  info: "#356599",
+// Solid, theme-aware seed colors (each already has a light/dark pair defined
+// in globals.css) — filled cards mix these toward --surface so they stay
+// visible in both themes instead of relying on hardcoded hex per theme.
+export const TONE_VARS = {
+  primary: "var(--accent)",
+  success: "var(--success)",
+  danger: "var(--danger)",
+  info: "var(--info)",
 };
 
 export function StatCard({
@@ -44,15 +41,15 @@ export function StatCard({
   return (
     <Card
       className="relative flex h-full flex-col justify-center overflow-hidden p-5"
-      style={filled ? { background: FILL_COLORS[tone], borderColor: "transparent" } : undefined}
+      style={filled ? { background: pastelFill(TONE_VARS[tone]), borderColor: "transparent" } : undefined}
     >
       {filled && (
         <MaterialIcon
           name={icon}
           size={96}
           filled
-          className="pointer-events-none absolute -bottom-4 -right-4 opacity-[0.14]"
-          style={{ color: FILL_ICON_COLORS[tone] }}
+          className="pointer-events-none absolute -bottom-4 -right-4 opacity-[0.18]"
+          style={{ color: TONE_VARS[tone] }}
         />
       )}
       <div className="relative flex items-start justify-between">

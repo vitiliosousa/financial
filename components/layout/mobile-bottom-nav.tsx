@@ -22,7 +22,7 @@ export function MobileBottomNav() {
         href={item.href}
         className={cn(
           "flex flex-1 flex-col items-center gap-1 py-2 text-[11px] font-medium transition-colors",
-          active ? "text-primary-foreground" : "text-primary-foreground/45"
+          active ? "text-nav-fg" : "text-nav-fg/45"
         )}
       >
         <MaterialIcon name={item.icon} size={21} filled={active} />
@@ -34,7 +34,7 @@ export function MobileBottomNav() {
   return (
     <>
       <nav
-        className="fixed inset-x-4 z-40 flex items-center justify-around rounded-full bg-primary px-2 shadow-[var(--shadow-2)] lg:hidden"
+        className="fixed inset-x-4 z-40 flex items-center justify-around rounded-full bg-nav-bg px-2 shadow-[var(--shadow-2)] lg:hidden"
         style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))", height: "60px" }}
       >
         {leftItems.map(renderItem)}
@@ -42,7 +42,7 @@ export function MobileBottomNav() {
         <div className="flex flex-1 items-center justify-center">
           <button
             onClick={() => setAddOpen(true)}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-[#8fae6b] text-white transition-transform active:scale-95"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-white transition-transform active:scale-95"
             aria-label="Nova transação"
           >
             <MaterialIcon name="add" size={24} />

@@ -1,31 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  /* Light scheme: a warm cream canvas (not stark white) — soft, friendly,
-     paired with confident black ink for structure/primary actions and a
-     curated set of soft pastel accents (gold, sage, coral, blue) used
-     generously in badges, charts, and one highlighted card per screen. */
-  --background: #f7f1e3;
-  --surface: #fffdf6;
-  --surface-hover: #efe7d3;
-  --sidebar-bg: #fbf6ea;
-  --border: #e8dfc9;
+  /* Light scheme: a clean white canvas — confident black ink for structure/
+     primary actions, and a curated set of soft pastel accents (green, coral,
+     blue, gold) used generously in badges, charts, and highlighted cards. */
+  --background: #ffffff;
+  --surface: #ffffff;
+  --surface-hover: #f7f7f5;
+  --sidebar-bg: #fbfbfa;
+  --border: #eeeeec;
   --foreground: #191919;
-  --muted: #6b6350;
-  --muted-foreground: #6e6650;
+  --muted: #52525b;
+  --muted-foreground: #6e6e68;
 
-  /* Ink: drives primary buttons, the sidebar's active state, and the
-     bottom nav — a confident near-black, never a saturated hue. */
+  /* Ink: drives primary buttons and the sidebar's active state — a
+     confident near-black, never a saturated hue. */
   --primary: #191919;
   --primary-hover: #37352f;
   --primary-foreground: #ffffff;
-  --primary-soft: #efe6d2;
+  --primary-soft: #f1f1ef;
 
-  /* Accent: links, focus rings — a deep gold pulled from the pastel
-     family below so it stays legible as text, not just a badge fill. */
-  --accent: #8a6812;
-  --accent-hover: #705310;
-  --accent-soft: #fbf0d6;
+  /* Accent: the app's actual brand color — the same sage green as the
+     bottom nav's "+" button. Drives links, focus rings, and the one
+     highlighted card per screen. */
+  --accent: #4a6633;
+  --accent-hover: #3d5529;
+  --accent-soft: #eaf0e2;
 
   --success: #457035;
   --success-soft: #edf4e7;
@@ -43,6 +43,18 @@
   --radius-md: 0.875rem;
   --radius-sm: 0.75rem;
   --radius-pill: 999px;
+
+  /* Fixed, theme-independent — the sidebar and bottom nav stay black in
+     both light and dark mode, unlike --primary which flips. */
+  --nav-bg: #191919;
+  --nav-fg: #ffffff;
+
+  /* How much of a user-chosen color shows through a "filled" card/badge,
+     mixed against --surface. Dark surfaces need a much higher share to
+     read as colorful instead of receding into near-black. */
+  --pastel-mix: 20%;
+  --pastel-border-mix: 38%;
+  --pastel-icon-mix: 30%;
 }
 
 :root[data-theme="dark"] {
@@ -60,9 +72,9 @@
   --primary-foreground: #09090b;
   --primary-soft: #1c1c20;
 
-  --accent: #e8c24d;
-  --accent-hover: #f0d370;
-  --accent-soft: #2a2410;
+  --accent: #8fae6b;
+  --accent-hover: #a3c583;
+  --accent-soft: #1f2a18;
 
   --success: #7fc26a;
   --success-soft: #16281a;
@@ -75,6 +87,10 @@
 
   --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-2: 0 8px 24px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+
+  --pastel-mix: 55%;
+  --pastel-border-mix: 68%;
+  --pastel-icon-mix: 62%;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -108,6 +124,10 @@
 
     --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
     --shadow-2: 0 8px 24px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+
+    --pastel-mix: 55%;
+    --pastel-border-mix: 68%;
+    --pastel-icon-mix: 62%;
   }
 }
 
@@ -125,6 +145,9 @@
   --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-soft: var(--primary-soft);
+
+  --color-nav-bg: var(--nav-bg);
+  --color-nav-fg: var(--nav-fg);
 
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);

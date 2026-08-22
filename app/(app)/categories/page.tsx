@@ -13,6 +13,7 @@ import { ConfirmModal } from "@/components/ui/modal";
 import { MaterialIcon } from "@/components/ui/material-icon";
 import { CategoryFormModal } from "@/components/categories/category-form-modal";
 import { cn } from "@/lib/cn";
+import { pastelBorder, pastelFill } from "@/lib/pastel";
 
 export default function CategoriesPage() {
   const categories = useFinanceStore((s) => s.categories);
@@ -91,7 +92,7 @@ export default function CategoriesPage() {
             <Card
               key={category.id}
               className="group flex items-center gap-3 p-4 transition-transform hover:-translate-y-0.5"
-              style={{ background: `${category.color}29`, borderColor: `${category.color}45` }}
+              style={{ background: pastelFill(category.color), borderColor: pastelBorder(category.color) }}
             >
               <Link
                 href={`/transactions?categoryId=${category.id}`}

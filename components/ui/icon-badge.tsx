@@ -1,6 +1,7 @@
 import type { IconName } from "@/lib/types";
 import { DynamicIcon } from "./icon";
 import { cn } from "@/lib/cn";
+import { pastelIconBg } from "@/lib/pastel";
 
 export function IconBadge({
   icon,
@@ -26,7 +27,7 @@ export function IconBadge({
   return (
     <div
       className={cn("flex shrink-0 items-center justify-center rounded-full", sizes[size], className)}
-      style={{ background: `${color}3d`, color }}
+      style={{ background: pastelIconBg(color), color }}
     >
       <DynamicIcon name={icon} size={iconSizes[size]} />
     </div>
