@@ -105,6 +105,7 @@ export default function AccountsPage() {
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {transfer.description ? `${transfer.description} · ` : ""}
+                    {transfer.fee > 0 ? `taxa ${formatCurrency(transfer.fee)} · ` : ""}
                     {formatDate(transfer.date)}
                   </p>
                 </div>

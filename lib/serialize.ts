@@ -76,6 +76,7 @@ export function serializeTransfer(row: TransferRow): Transfer {
     fromId: row.fromId,
     toId: row.toId,
     amount: Number(row.amount),
+    fee: Number(row.fee),
     date: toDateOnlyString(row.date),
     description: row.description ?? undefined,
   };

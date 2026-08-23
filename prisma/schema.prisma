@@ -53,6 +53,7 @@ model Transfer {
   fromId      String
   toId        String
   amount      Decimal  @db.Decimal(14, 2)
+  fee         Decimal  @default(0) @db.Decimal(14, 2)
   date        DateTime
   description String?
   createdAt   DateTime @default(now())

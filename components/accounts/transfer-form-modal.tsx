@@ -29,6 +29,7 @@ function TransferForm({ onClose }: { onClose: () => void }) {
   const [fromId, setFromId] = useState(accounts[0]?.id ?? "");
   const [toId, setToId] = useState(accounts[1]?.id ?? accounts[0]?.id ?? "");
   const [amount, setAmount] = useState("");
+  const [fee, setFee] = useState("");
   const [date, setDate] = useState(formatDateInput(new Date()));
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -44,6 +45,7 @@ function TransferForm({ onClose }: { onClose: () => void }) {
       fromId,
       toId,
       amount: Number(amount) || 0,
+      fee: Number(fee) || 0,
       date,
       description: description.trim() || undefined,
     });
@@ -84,18 +86,32 @@ function TransferForm({ onClose }: { onClose: () => void }) {
         </div>
       </div>
 
-      <div>
-        <Label htmlFor="transfer-amount">Valor (MT)</Label>
-        <Input
-          id="transfer-amount"
-          type="number"
-          step="0.01"
-          min="0"
-          required
-          placeholder="0,00"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label htmlFor="transfer-amount">Valor (MT)</Label>
+          <Input
+            id="transfer-amount"
+            type="number"
+            step="0.01"
+            min="0"
+            required
+            placeholder="0,00"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="transfer-fee">Taxa (opcional)</Label>
+          <Input
+            id="transfer-fee"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="0,00"
+            value={fee}
+            onChange={(e) => setFee(e.target.value)}
+          />
+        </div>
       </div>
 
       <div>

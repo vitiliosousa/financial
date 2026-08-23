@@ -10,7 +10,7 @@ export function getAccountBalance(
     .filter((t) => t.accountId === account.id)
     .reduce((sum, t) => sum + (t.type === "income" ? t.amount : -t.amount), 0);
   const transferDelta = transfers.reduce((sum, t) => {
-    if (t.fromId === account.id) return sum - t.amount;
+    if (t.fromId === account.id) return sum - t.amount - t.fee;
     if (t.toId === account.id) return sum + t.amount;
     return sum;
   }, 0);
@@ -22,8 +22,9 @@ export function getTotalBalance(
   transactions: Transaction[],
   transfers: Transfer[] = []
 ): number {
-  // Transfers move money between the user's own accounts, so they always net
-  // to zero across the combined total — only per-account balances need them.
+  // Transfers move money between the user's own accounts, so the amount
+  // nets to zero across the combined total — but any fee is a real cost
+  // that leaves the total, deducted from the source account above.
   return accounts.reduce((sum, a) => sum + getAccountBalance(a, transactions, transfers), 0);
 }
 

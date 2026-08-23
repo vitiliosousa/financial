@@ -78,6 +78,7 @@ export interface Transfer {
   fromId: string;
   toId: string;
   amount: number;
+  fee: number;
   date: string; // ISO date string
   description?: string;
 }

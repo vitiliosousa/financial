@@ -43,7 +43,7 @@ export default function RegisterPage() {
       setError("Conta criada, mas não foi possível iniciar sessão. Tente entrar manualmente.");
       return;
     }
-    router.push("/dashboard");
+    router.push("/onboarding");
     router.refresh();
   }
 

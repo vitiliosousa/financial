@@ -3,14 +3,6 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { registerInputSchema } from "@/lib/validation";
-import { CATEGORIES } from "@/lib/mock-data";
-
-const DEFAULT_CATEGORIES = CATEGORIES.map((category) => ({
-  name: category.name,
-  type: category.type,
-  color: category.color,
-  icon: category.icon,
-}));
 
 export async function registerAction(input: {
   name: string;
@@ -32,7 +24,6 @@ export async function registerAction(input: {
       accounts: {
         create: [{ name: "Carteira", type: "wallet", icon: "wallet", color: "#6d5ef8", initialBalance: 0 }],
       },
-      categories: { create: DEFAULT_CATEGORIES },
     },
   });
 }

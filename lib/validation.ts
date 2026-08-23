@@ -50,6 +50,7 @@ export const transferInputSchema = z
     fromId: z.string().min(1),
     toId: z.string().min(1),
     amount: z.number().positive(),
+    fee: z.number().min(0).default(0),
     date: dateOnlySchema,
     description: z.string().trim().max(200).optional(),
   })
