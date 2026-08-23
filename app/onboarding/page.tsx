@@ -10,6 +10,7 @@ export default async function OnboardingPage() {
   if (!session?.user?.id) redirect("/login");
 
   const data = await getUserFinanceData(session.user.id);
+  if (!data) redirect("/api/session-reset");
 
   return (
     <FinanceStoreProvider data={data}>

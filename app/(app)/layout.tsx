@@ -12,6 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!session?.user?.id) redirect("/login");
 
   const data = await getUserFinanceData(session.user.id);
+  if (!data) redirect("/api/session-reset");
 
   return (
     <FinanceStoreProvider data={data}>

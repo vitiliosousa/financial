@@ -31,10 +31,13 @@ export interface UserFinanceData {
   goals: Goal[];
 }
 
-export async function getUserFinanceData(userId: string): Promise<UserFinanceData> {
+// Returns null if userId doesn't match a real user — e.g. a session cookie
+// left over from a deleted account. Callers should treat that as a signal
+// to clear the stale session rather than crash.
+export async function getUserFinanceData(userId: string): Promise<UserFinanceData | null> {
   const [user, accounts, categories, transactions, recurring, transfers, budgets, goals] =
     await Promise.all([
-      prisma.user.findUniqueOrThrow({ where: { id: userId } }),
+      prisma.user.findUnique({ where: { id: userId } }),
       prisma.account.findMany({ where: { userId }, orderBy: { createdAt: "asc" } }),
       prisma.category.findMany({ where: { userId }, orderBy: { name: "asc" } }),
       prisma.transaction.findMany({ where: { userId }, orderBy: { date: "desc" } }),
@@ -43,6 +46,8 @@ export async function getUserFinanceData(userId: string): Promise<UserFinanceDat
       prisma.budget.findMany({ where: { userId } }),
       prisma.goal.findMany({ where: { userId }, orderBy: { createdAt: "asc" } }),
     ]);
+
+  if (!user) return null;
 
   return {
     user: { name: user.name, email: user.email, avatarColor: user.avatarColor },
