@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { MaterialIcon } from "@/components/ui/material-icon";
 import { cn } from "@/lib/cn";
-import { pastelFill } from "@/lib/pastel";
 
 // Solid, theme-aware seed colors (each already has a light/dark pair defined
 // in globals.css) — filled cards mix these toward --surface so they stay
@@ -39,10 +38,7 @@ export function StatCard({
   };
 
   return (
-    <Card
-      className="relative flex h-full flex-col justify-center overflow-hidden p-5"
-      style={filled ? { background: pastelFill(TONE_VARS[tone]), borderColor: "transparent" } : undefined}
-    >
+    <Card className="relative flex h-full flex-col justify-center overflow-hidden p-5">
       {filled && (
         <MaterialIcon
           name={icon}

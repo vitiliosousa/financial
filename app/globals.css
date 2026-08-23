@@ -109,9 +109,9 @@
     --primary-foreground: #09090b;
     --primary-soft: #1c1c20;
 
-    --accent: #e8c24d;
-    --accent-hover: #f0d370;
-    --accent-soft: #2a2410;
+    --accent: #8fae6b;
+    --accent-hover: #a3c583;
+    --accent-soft: #1f2a18;
 
     --success: #7fc26a;
     --success-soft: #16281a;
@@ -300,4 +300,17 @@ body {
 
 .animate-spinner {
   animation: spin 0.7s linear infinite;
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-sheet-up {
+  animation: sheet-up 0.22s ease-out;
 }

@@ -26,6 +26,10 @@ export default function AccountsPage() {
   const [transferOpen, setTransferOpen] = useState(false);
   const [editing, setEditing] = useState<Account | undefined>(undefined);
   const [deleting, setDeleting] = useState<Account | undefined>(undefined);
+  const [showAllTransfers, setShowAllTransfers] = useState(false);
+
+  const TRANSFERS_PREVIEW = 5;
+  const visibleTransfers = showAllTransfers ? transfers : transfers.slice(0, TRANSFERS_PREVIEW);
 
   const totalBalance = accounts.reduce((sum, a) => sum + getAccountBalance(a, transactions, transfers), 0);
   const accountName = (id: string) => accounts.find((a) => a.id === id)?.name ?? "Conta eliminada";
@@ -92,7 +96,7 @@ export default function AccountsPage() {
         <div>
           <h2 className="mb-3 text-sm font-semibold text-foreground">Transferências recentes</h2>
           <div className="divide-y divide-border rounded-[var(--radius-lg)] border border-border">
-            {transfers.map((transfer) => (
+            {visibleTransfers.map((transfer) => (
               <div key={transfer.id} className="flex items-center gap-3 px-4 py-3 text-sm">
                 <MaterialIcon name="sync_alt" size={18} className="shrink-0 text-muted-foreground" />
                 <div className="min-w-0 flex-1">
@@ -119,6 +123,15 @@ export default function AccountsPage() {
               </div>
             ))}
           </div>
+          {transfers.length > TRANSFERS_PREVIEW && (
+            <button
+              type="button"
+              onClick={() => setShowAllTransfers((v) => !v)}
+              className="mt-2 text-xs font-medium text-accent hover:underline"
+            >
+              {showAllTransfers ? "Mostrar menos" : `Ver todas (${transfers.length})`}
+            </button>
+          )}
         </div>
       )}
 

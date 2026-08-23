@@ -14,7 +14,6 @@ import {
 import { formatCurrency, formatFullMonthLabel } from "@/lib/format";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { HeroBalanceCard } from "@/components/dashboard/hero-balance-card";
-import { QuickLinks } from "@/components/dashboard/quick-links";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BalanceEvolutionChart } from "@/components/charts/balance-evolution-chart";
 import { CategoryPieChart } from "@/components/charts/category-pie-chart";
@@ -94,8 +93,6 @@ export default function DashboardPage() {
           />
         </div>
       </div>
-
-      <QuickLinks />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>

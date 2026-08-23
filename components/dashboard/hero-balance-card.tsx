@@ -2,7 +2,6 @@ import { formatCurrency } from "@/lib/format";
 import { Card } from "@/components/ui/card";
 import { MaterialIcon } from "@/components/ui/material-icon";
 import { TONE_VARS } from "./stat-card";
-import { pastelFill } from "@/lib/pastel";
 
 export function HeroBalanceCard({
   totalBalance,
@@ -16,10 +15,7 @@ export function HeroBalanceCard({
   accountsCount: number;
 }) {
   return (
-    <Card
-      className="relative flex h-full flex-col justify-between overflow-hidden p-6"
-      style={{ background: pastelFill(TONE_VARS.primary), borderColor: "transparent" }}
-    >
+    <Card className="relative flex h-full flex-col justify-between overflow-hidden p-6">
       <MaterialIcon
         name="account_balance_wallet"
         size={140}
@@ -30,10 +26,7 @@ export function HeroBalanceCard({
       <div className="relative">
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">Saldo total</p>
-          <span
-            className="rounded-[var(--radius-sm)] px-2.5 py-1 text-xs font-medium"
-            style={{ background: "color-mix(in srgb, var(--surface) 60%, transparent)", color: TONE_VARS.primary }}
-          >
+          <span className="rounded-[var(--radius-sm)] bg-primary-soft px-2.5 py-1 text-xs font-medium text-muted-foreground">
             {accountsCount} {accountsCount === 1 ? "conta" : "contas"}
           </span>
         </div>
@@ -43,7 +36,7 @@ export function HeroBalanceCard({
         </p>
       </div>
 
-      <div className="relative mt-6 flex items-center gap-6 border-t border-primary/10 pt-4">
+      <div className="relative mt-6 flex items-center gap-6 border-t border-border pt-4">
         <div className="flex items-center gap-2">
           <MaterialIcon name="arrow_upward" size={16} className="text-success" />
           <div>
