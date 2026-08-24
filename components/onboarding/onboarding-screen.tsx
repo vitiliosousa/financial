@@ -35,8 +35,9 @@ export function OnboardingScreen() {
       <div className="mx-auto mt-8 w-full max-w-2xl animate-fade-in">
         <h1 className="text-2xl font-bold text-foreground">Bem-vindo(a), {firstName}!</h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
-          Vamos deixar a sua conta pronta. Escolha algumas categorias, metas e orçamentos para
-          começar — tudo aqui é opcional, pode fazer isto mais tarde a partir do menu.
+          Vamos deixar a sua conta pronta. Comece por indicar as suas contas e saldos, depois
+          escolha categorias, metas e orçamentos — tudo aqui é opcional, pode fazer isto mais
+          tarde a partir do menu.
         </p>
 
         <Card className="mt-6">

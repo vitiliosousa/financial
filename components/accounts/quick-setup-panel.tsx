@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { Category, IconName, TransactionType } from "@/lib/types";
+import type { Account, Category, IconName, TransactionType } from "@/lib/types";
 import { useFinanceStore } from "@/lib/store";
 import { useToastStore } from "@/lib/toast-store";
 import { Button } from "@/components/ui/button";
-import { Input, Label } from "@/components/ui/input";
+import { Input, Label, Select } from "@/components/ui/input";
 import { IconPicker } from "@/components/ui/icon-picker";
 import { ColorPicker } from "@/components/ui/color-picker";
 import { ICON_MAP } from "@/components/ui/icon";
@@ -30,7 +30,20 @@ const GOAL_SUGGESTIONS: { name: string; icon: IconName; color: string }[] = [
   { name: "Carro novo", icon: "car", color: "#c9694f" },
 ];
 
+const ACCOUNT_SUGGESTIONS: { name: string; type: Account["type"]; icon: IconName; color: string }[] = [
+  { name: "Conta Bancária", type: "bank", icon: "landmark", color: "#6fa8dc" },
+  { name: "M-Pesa", type: "mobile-money", icon: "smartphone", color: "#e0916b" },
+  { name: "e-Mola", type: "mobile-money", icon: "smartphone", color: "#d9738f" },
+  { name: "Poupança", type: "bank", icon: "piggy-bank", color: "#8fae6b" },
+];
+
 const STEPS = [
+  {
+    key: "accounts",
+    title: "Contas",
+    icon: "account_balance_wallet",
+    explain: "Indique as contas que tem — carteira, banco, dinheiro móvel — e os respetivos saldos.",
+  },
   {
     key: "categories",
     title: "Categorias",
@@ -58,6 +71,18 @@ function CatIcon({ icon, color, size = 14 }: { icon: IconName; color: string; si
   return <MaterialIcon name={ICON_MAP[icon]} size={size} style={{ color }} />;
 }
 
+function PrivacyNote() {
+  return (
+    <div className="mb-4 flex items-start gap-2 rounded-[var(--radius-md)] border border-border bg-surface-hover px-3 py-2.5">
+      <MaterialIcon name="lock" size={16} className="mt-0.5 shrink-0 text-muted-foreground" />
+      <p className="text-xs text-muted-foreground">
+        Os saldos que introduzir são privados — só você os vê. Nunca são partilhados, divulgados ou usados
+        para outro fim.
+      </p>
+    </div>
+  );
+}
+
 export function QuickSetupPanel({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
   const current = STEPS[step];
@@ -83,9 +108,10 @@ export function QuickSetupPanel({ onDone }: { onDone: () => void }) {
         </div>
       </div>
 
-      {step === 0 && <CategoriesQuickSection />}
-      {step === 1 && <GoalsQuickSection />}
-      {step === 2 && <BudgetsQuickSection />}
+      {step === 0 && <AccountsQuickSection />}
+      {step === 1 && <CategoriesQuickSection />}
+      {step === 2 && <GoalsQuickSection />}
+      {step === 3 && <BudgetsQuickSection />}
 
       <div className="mt-6 flex justify-between gap-2">
         <Button
@@ -100,6 +126,269 @@ export function QuickSetupPanel({ onDone }: { onDone: () => void }) {
         </Button>
       </div>
     </div>
+  );
+}
+
+function AccountsQuickSection() {
+  const accounts = useFinanceStore((s) => s.accounts);
+  const addAccount = useFinanceStore((s) => s.addAccount);
+  const showToast = useToastStore((s) => s.show);
+  const [active, setActive] = useState<{ name: string; type: Account["type"]; icon: IconName; color: string } | null>(
+    null
+  );
+  const [customOpen, setCustomOpen] = useState(false);
+  const [added, setAdded] = useState<Set<string>>(new Set());
+
+  // Frozen at mount: the accounts that already exist when this step opens
+  // (e.g. the default "Carteira" created at registration) are edited in
+  // place below, and excluded from the "add a new one" suggestions.
+  const [existingAccounts] = useState(accounts);
+  const existingNames = new Set(existingAccounts.map((a) => a.name.trim().toLowerCase()));
+  const suggestions = ACCOUNT_SUGGESTIONS.filter((s) => !existingNames.has(s.name.toLowerCase()));
+
+  function addSuggestion(name: string, type: Account["type"], icon: IconName, color: string, initialBalance: number) {
+    addAccount({ name, type, icon, color, initialBalance });
+    setAdded((prev) => new Set(prev).add(name));
+    showToast(`Conta "${name}" adicionada.`);
+    setActive(null);
+    setCustomOpen(false);
+  }
+
+  return (
+    <section>
+      <PrivacyNote />
+
+      {existingAccounts.length > 0 && (
+        <div className="mb-4 space-y-2">
+          {existingAccounts.map((account) => (
+            <ExistingAccountRow key={account.id} account={account} />
+          ))}
+        </div>
+      )}
+
+      {suggestions.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {suggestions.map((s) => {
+            const isAdded = added.has(s.name);
+            return (
+              <button
+                key={s.name}
+                type="button"
+                disabled={isAdded}
+                onClick={() => setActive(s)}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                  isAdded
+                    ? "border-transparent bg-success-soft text-success"
+                    : "border-border text-foreground hover:bg-surface-hover"
+                )}
+              >
+                {isAdded ? <MaterialIcon name="check" size={14} /> : <CatIcon icon={s.icon} color={s.color} />}
+                {s.name}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {active && (
+        <AccountAmountForm
+          name={active.name}
+          icon={active.icon}
+          color={active.color}
+          onCancel={() => setActive(null)}
+          onConfirm={(balance) => addSuggestion(active.name, active.type, active.icon, active.color, balance)}
+        />
+      )}
+
+      <button
+        type="button"
+        onClick={() => setCustomOpen((v) => !v)}
+        className="mt-3 text-xs font-medium text-accent hover:underline"
+      >
+        {customOpen ? "Cancelar" : "+ Conta personalizada"}
+      </button>
+
+      {customOpen && (
+        <CustomAccountForm
+          onAdd={(name, type, icon, color, balance) => addSuggestion(name, type, icon, color, balance)}
+        />
+      )}
+    </section>
+  );
+}
+
+function ExistingAccountRow({ account }: { account: Account }) {
+  const updateAccount = useFinanceStore((s) => s.updateAccount);
+  const showToast = useToastStore((s) => s.show);
+  const [name, setName] = useState(account.name);
+  const [balance, setBalance] = useState(String(account.initialBalance));
+  const [dirty, setDirty] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  function handleSave() {
+    updateAccount(account.id, { name: name.trim() || account.name, initialBalance: Number(balance) || 0 });
+    showToast("Conta atualizada.");
+    setDirty(false);
+    setSaved(true);
+  }
+
+  return (
+    <div className="flex items-center gap-2 rounded-[var(--radius-md)] border border-border p-2.5">
+      <CatIcon icon={account.icon} color={account.color} size={18} />
+      <Input
+        aria-label="Nome da conta"
+        value={name}
+        onChange={(e) => {
+          setName(e.target.value);
+          setDirty(true);
+          setSaved(false);
+        }}
+        className="h-9 flex-1 text-xs"
+      />
+      <Input
+        aria-label="Saldo"
+        type="number"
+        step="0.01"
+        placeholder="Saldo (MT)"
+        value={balance}
+        onChange={(e) => {
+          setBalance(e.target.value);
+          setDirty(true);
+          setSaved(false);
+        }}
+        className="h-9 w-32 text-xs"
+      />
+      {saved && !dirty ? (
+        <MaterialIcon name="check" size={16} className="shrink-0 text-success" />
+      ) : (
+        <Button type="button" variant="outline" size="sm" disabled={!dirty} onClick={handleSave}>
+          Guardar
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function AccountAmountForm({
+  name,
+  icon,
+  color,
+  onCancel,
+  onConfirm,
+}: {
+  name: string;
+  icon: IconName;
+  color: string;
+  onCancel: () => void;
+  onConfirm: (balance: number) => void;
+}) {
+  const [amount, setAmount] = useState("");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    onConfirm(Number(amount) || 0);
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="mt-3 flex items-end gap-2 rounded-[var(--radius-md)] border border-border p-3"
+    >
+      <div className="flex-1">
+        <Label htmlFor="quick-account-amount">
+          <span className="inline-flex items-center gap-1.5">
+            <CatIcon icon={icon} color={color} />
+            {name} — saldo atual (MT)
+          </span>
+        </Label>
+        <Input
+          id="quick-account-amount"
+          type="number"
+          step="0.01"
+          autoFocus
+          placeholder="0,00"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+      </div>
+      <Button type="button" variant="outline" size="sm" onClick={onCancel}>
+        Cancelar
+      </Button>
+      <Button type="submit" size="sm">
+        Adicionar
+      </Button>
+    </form>
+  );
+}
+
+function CustomAccountForm({
+  onAdd,
+}: {
+  onAdd: (name: string, type: Account["type"], icon: IconName, color: string, balance: number) => void;
+}) {
+  const [name, setName] = useState("");
+  const [type, setType] = useState<Account["type"]>("wallet");
+  const [amount, setAmount] = useState("");
+  const [icon, setIcon] = useState<IconName>("wallet");
+  const [color, setColor] = useState("#d9a72c");
+
+  const ACCOUNT_TYPES: { value: Account["type"]; label: string }[] = [
+    { value: "wallet", label: "Carteira" },
+    { value: "bank", label: "Conta Bancária" },
+    { value: "mobile-money", label: "Dinheiro Móvel" },
+    { value: "other", label: "Outro" },
+  ];
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim()) return;
+    onAdd(name.trim(), type, icon, color, Number(amount) || 0);
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-3 space-y-3 rounded-[var(--radius-md)] border border-border p-3">
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label htmlFor="quick-acc-name">Nome</Label>
+          <Input
+            id="quick-acc-name"
+            required
+            placeholder="Ex: Standard Bank"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="quick-acc-balance">Saldo atual (MT)</Label>
+          <Input
+            id="quick-acc-balance"
+            type="number"
+            step="0.01"
+            placeholder="0,00"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="quick-acc-type">Tipo</Label>
+        <Select id="quick-acc-type" value={type} onChange={(e) => setType(e.target.value as Account["type"])}>
+          {ACCOUNT_TYPES.map((t) => (
+            <option key={t.value} value={t.value}>
+              {t.label}
+            </option>
+          ))}
+        </Select>
+      </div>
+      <ColorPicker value={color} onChange={setColor} />
+      <IconPicker value={icon} onChange={setIcon} color={color} />
+      <div className="flex justify-end">
+        <Button type="submit" size="sm">
+          Adicionar conta
+        </Button>
+      </div>
+    </form>
   );
 }
 
