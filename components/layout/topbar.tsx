@@ -7,6 +7,7 @@ import { useFinanceStore } from "@/lib/store";
 import { NAV_ITEMS, SECONDARY_HREFS, SETTINGS_ITEM } from "./nav-config";
 import { Button } from "@/components/ui/button";
 import { MaterialIcon } from "@/components/ui/material-icon";
+import { NavLinkIcon } from "@/components/ui/nav-link-icon";
 
 function pageTitle(pathname: string): string {
   const all = [...NAV_ITEMS, SETTINGS_ITEM];
@@ -38,7 +39,7 @@ export function Topbar() {
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground lg:hidden"
             aria-label="Voltar ao dashboard"
           >
-            <MaterialIcon name="arrow_back" size={20} />
+            <NavLinkIcon name="arrow_back" size={20} />
           </Link>
         )}
         <h1 className="truncate text-lg font-semibold tracking-tight text-foreground">

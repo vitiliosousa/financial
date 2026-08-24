@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MOBILE_NAV_ENTRIES, type MobileNavGroup } from "./nav-config";
 import { MaterialIcon } from "@/components/ui/material-icon";
+import { NavLinkIcon } from "@/components/ui/nav-link-icon";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { TransactionFormModal } from "@/components/transactions/transaction-form-modal";
 import { cn } from "@/lib/cn";
@@ -13,6 +14,17 @@ export function MobileBottomNav() {
   const pathname = usePathname();
   const [addOpen, setAddOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<MobileNavGroup | null>(null);
+  const openGroupRef = useRef<MobileNavGroup | null>(null);
+  useEffect(() => {
+    openGroupRef.current = openGroup;
+  }, [openGroup]);
+
+  // Closes once the destination page actually finishes loading, instead of
+  // the moment the option is tapped — so the pending spinner on the tapped
+  // option has time to show while its data-heavy page loads.
+  useEffect(() => {
+    if (openGroupRef.current) setOpenGroup(null);
+  }, [pathname]);
 
   const [leftEntries, rightEntries] = [MOBILE_NAV_ENTRIES.slice(0, 2), MOBILE_NAV_ENTRIES.slice(2)];
 
@@ -32,7 +44,7 @@ export function MobileBottomNav() {
             active ? "text-nav-fg" : "text-nav-fg/45"
           )}
         >
-          <MaterialIcon name={entry.icon} size={21} filled={active} />
+          <NavLinkIcon name={entry.icon} size={21} filled={active} />
           {entry.label}
         </Link>
       );
@@ -84,13 +96,12 @@ export function MobileBottomNav() {
               <Link
                 key={option.href}
                 href={option.href}
-                onClick={() => setOpenGroup(null)}
                 className={cn(
                   "flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-3 text-sm font-medium transition-colors",
                   active ? "bg-primary-soft text-foreground" : "text-foreground hover:bg-surface-hover"
                 )}
               >
-                <MaterialIcon name={option.icon} size={20} />
+                <NavLinkIcon name={option.icon} size={20} />
                 {option.label}
               </Link>
             );

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MaterialIcon } from "./material-icon";
+import { NavLinkIcon } from "./nav-link-icon";
 import { cn } from "@/lib/cn";
 
 export interface RouteTab {
@@ -24,7 +24,7 @@ export function RouteTabs({ tabs }: { tabs: readonly RouteTab[] }) {
             pathname === tab.href ? "bg-primary-soft text-foreground" : "text-muted-foreground hover:text-foreground"
           )}
         >
-          <MaterialIcon name={tab.icon} size={16} />
+          <NavLinkIcon name={tab.icon} size={16} />
           {tab.label}
         </Link>
       ))}

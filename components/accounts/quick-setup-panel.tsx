@@ -31,7 +31,16 @@ const GOAL_SUGGESTIONS: { name: string; icon: IconName; color: string }[] = [
 ];
 
 const ACCOUNT_SUGGESTIONS: { name: string; type: Account["type"]; icon: IconName; color: string }[] = [
-  { name: "Conta Bancária", type: "bank", icon: "landmark", color: "#6fa8dc" },
+  { name: "Millennium BIM", type: "bank", icon: "landmark", color: "#d9a72c" },
+  { name: "BCI", type: "bank", icon: "landmark", color: "#6fa8dc" },
+  { name: "Standard Bank", type: "bank", icon: "landmark", color: "#5fa8b8" },
+  { name: "Nedbank", type: "bank", icon: "landmark", color: "#c9694f" },
+  { name: "FNB", type: "bank", icon: "landmark", color: "#9b6b9e" },
+  { name: "Moza Banco", type: "bank", icon: "landmark", color: "#a88fd1" },
+  { name: "Absa Bank", type: "bank", icon: "landmark", color: "#9a9548" },
+  { name: "UBA", type: "bank", icon: "landmark", color: "#6bb3a0" },
+  { name: "First Capital Bank", type: "bank", icon: "landmark", color: "#e8c468" },
+  { name: "Access Bank", type: "bank", icon: "landmark", color: "#356599" },
   { name: "M-Pesa", type: "mobile-money", icon: "smartphone", color: "#e0916b" },
   { name: "e-Mola", type: "mobile-money", icon: "smartphone", color: "#d9738f" },
   { name: "Poupança", type: "bank", icon: "piggy-bank", color: "#8fae6b" },
@@ -234,38 +243,42 @@ function ExistingAccountRow({ account }: { account: Account }) {
   }
 
   return (
-    <div className="flex items-center gap-2 rounded-[var(--radius-md)] border border-border p-2.5">
-      <CatIcon icon={account.icon} color={account.color} size={18} />
-      <Input
-        aria-label="Nome da conta"
-        value={name}
-        onChange={(e) => {
-          setName(e.target.value);
-          setDirty(true);
-          setSaved(false);
-        }}
-        className="h-9 flex-1 text-xs"
-      />
-      <Input
-        aria-label="Saldo"
-        type="number"
-        step="0.01"
-        placeholder="Saldo (MT)"
-        value={balance}
-        onChange={(e) => {
-          setBalance(e.target.value);
-          setDirty(true);
-          setSaved(false);
-        }}
-        className="h-9 w-32 text-xs"
-      />
-      {saved && !dirty ? (
-        <MaterialIcon name="check" size={16} className="shrink-0 text-success" />
-      ) : (
-        <Button type="button" variant="outline" size="sm" disabled={!dirty} onClick={handleSave}>
-          Guardar
-        </Button>
-      )}
+    <div className="rounded-[var(--radius-md)] border border-border p-3">
+      <div className="flex items-center gap-2">
+        <CatIcon icon={account.icon} color={account.color} size={18} />
+        <Input
+          aria-label="Nome da conta"
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+            setDirty(true);
+            setSaved(false);
+          }}
+          className="h-9 min-w-0 flex-1 text-sm"
+        />
+      </div>
+      <div className="mt-2 flex items-center gap-2">
+        <Input
+          aria-label="Saldo"
+          type="number"
+          step="0.01"
+          placeholder="Saldo (MT)"
+          value={balance}
+          onChange={(e) => {
+            setBalance(e.target.value);
+            setDirty(true);
+            setSaved(false);
+          }}
+          className="h-9 min-w-0 flex-1 text-sm"
+        />
+        {saved && !dirty ? (
+          <MaterialIcon name="check" size={18} className="shrink-0 text-success" />
+        ) : (
+          <Button type="button" variant="outline" size="sm" disabled={!dirty} onClick={handleSave} className="shrink-0">
+            Guardar
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

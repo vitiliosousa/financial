@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react";
 import { cn } from "@/lib/cn";
 import { NAV_ITEMS, SETTINGS_ITEM } from "./nav-config";
 import { MaterialIcon } from "@/components/ui/material-icon";
+import { NavLinkIcon } from "@/components/ui/nav-link-icon";
 import { Logo } from "@/components/ui/logo";
 
 function NavLink({ item, active }: { item: (typeof NAV_ITEMS)[number]; active: boolean }) {
@@ -19,7 +20,7 @@ function NavLink({ item, active }: { item: (typeof NAV_ITEMS)[number]; active: b
           : "text-nav-fg/55 font-normal hover:bg-nav-fg/10 hover:text-nav-fg"
       )}
     >
-      <MaterialIcon name={item.icon} size={18} />
+      <NavLinkIcon name={item.icon} size={18} />
       {item.label}
     </Link>
   );
