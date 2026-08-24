@@ -30,34 +30,73 @@ const GOAL_SUGGESTIONS: { name: string; icon: IconName; color: string }[] = [
   { name: "Carro novo", icon: "car", color: "#c9694f" },
 ];
 
+const STEPS = [
+  {
+    key: "categories",
+    title: "Categorias",
+    icon: "sell",
+    explain:
+      "Categorias organizam as suas transações — por exemplo, ligar uma compra no supermercado a \"Alimentação\". Escolha algumas sugestões ou crie as suas.",
+  },
+  {
+    key: "goals",
+    title: "Metas financeiras",
+    icon: "flag",
+    explain:
+      "Metas ajudam a poupar com um objetivo concreto em mente — por exemplo, juntar dinheiro para uma viagem ou um fundo de emergência.",
+  },
+  {
+    key: "budgets",
+    title: "Orçamentos",
+    icon: "savings",
+    explain:
+      "Orçamentos definem quanto pretende gastar por categoria em cada mês, para acompanhar se está dentro do previsto.",
+  },
+] as const;
+
 function CatIcon({ icon, color, size = 14 }: { icon: IconName; color: string; size?: number }) {
   return <MaterialIcon name={ICON_MAP[icon]} size={size} style={{ color }} />;
 }
 
-function SectionHeader({ icon, title, hint }: { icon: string; title: string; hint: string }) {
-  return (
-    <div className="mb-3 flex items-start gap-2">
-      <MaterialIcon name={icon} size={18} className="mt-0.5 shrink-0 text-muted-foreground" />
-      <div>
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        <p className="text-xs text-muted-foreground">{hint}</p>
-      </div>
-    </div>
-  );
-}
-
 export function QuickSetupPanel({ onDone }: { onDone: () => void }) {
-  return (
-    <div className="space-y-6">
-      <CategoriesQuickSection />
-      <div className="border-t border-border" />
-      <GoalsQuickSection />
-      <div className="border-t border-border" />
-      <BudgetsQuickSection />
+  const [step, setStep] = useState(0);
+  const current = STEPS[step];
+  const isFirst = step === 0;
+  const isLast = step === STEPS.length - 1;
 
-      <div className="flex justify-end pt-2">
-        <Button type="button" onClick={onDone}>
-          Concluir
+  return (
+    <div>
+      <div className="mb-5 flex items-center gap-1.5">
+        {STEPS.map((s, i) => (
+          <div
+            key={s.key}
+            className={cn("h-1.5 flex-1 rounded-full transition-colors", i <= step ? "bg-accent" : "bg-border")}
+          />
+        ))}
+      </div>
+
+      <div className="mb-4 flex items-start gap-2">
+        <MaterialIcon name={current.icon} size={18} className="mt-0.5 shrink-0 text-muted-foreground" />
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">{current.title}</h3>
+          <p className="text-xs text-muted-foreground">{current.explain}</p>
+        </div>
+      </div>
+
+      {step === 0 && <CategoriesQuickSection />}
+      {step === 1 && <GoalsQuickSection />}
+      {step === 2 && <BudgetsQuickSection />}
+
+      <div className="mt-6 flex justify-between gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => (isFirst ? onDone() : setStep((s) => s - 1))}
+        >
+          {isFirst ? "Saltar tudo" : "Voltar"}
+        </Button>
+        <Button type="button" onClick={() => (isLast ? onDone() : setStep((s) => s + 1))}>
+          {isLast ? "Concluir" : "Seguinte"}
         </Button>
       </div>
     </div>
@@ -71,7 +110,11 @@ function CategoriesQuickSection() {
   const [customOpen, setCustomOpen] = useState(false);
   const [added, setAdded] = useState<Set<string>>(new Set());
 
-  const existingNames = new Set(categories.map((c) => c.name.trim().toLowerCase()));
+  // Frozen at mount so a suggestion stays visible (with its "added" check)
+  // after being picked, instead of disappearing as soon as the store
+  // updates — only categories that already existed before this screen
+  // opened are excluded.
+  const [existingNames] = useState(() => new Set(categories.map((c) => c.name.trim().toLowerCase())));
   const suggestions = CATEGORY_SUGGESTIONS.filter((c) => !existingNames.has(c.name.toLowerCase()));
 
   function addSuggestion(s: Omit<Category, "id">) {
@@ -82,8 +125,6 @@ function CategoriesQuickSection() {
 
   return (
     <section>
-      <SectionHeader icon="sell" title="Categorias" hint="Escolha sugestões ou crie as suas — tudo opcional." />
-
       {suggestions.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {suggestions.map((s) => {
@@ -208,8 +249,6 @@ function GoalsQuickSection() {
 
   return (
     <section>
-      <SectionHeader icon="flag" title="Metas financeiras" hint="Comece uma poupança com objetivo — opcional." />
-
       <div className="flex flex-wrap gap-2">
         {GOAL_SUGGESTIONS.map((s) => {
           const isAdded = added.has(s.name);
@@ -381,10 +420,15 @@ function BudgetsQuickSection() {
   const month = now.getMonth();
   const year = now.getFullYear();
 
-  const budgetedIds = new Set(
-    budgets.filter((b) => b.month === month && b.year === year).map((b) => b.categoryId)
-  );
-  const candidates = categories.filter((c) => c.type === "expense" && !budgetedIds.has(c.id));
+  // Frozen at mount for the same reason as the categories step: a row
+  // should stay visible (showing its checkmark) after being saved, instead
+  // of disappearing the instant its budget lands in the store.
+  const [candidates] = useState(() => {
+    const budgetedIds = new Set(
+      budgets.filter((b) => b.month === month && b.year === year).map((b) => b.categoryId)
+    );
+    return categories.filter((c) => c.type === "expense" && !budgetedIds.has(c.id));
+  });
 
   const [limits, setLimits] = useState<Record<string, string>>({});
   const [saved, setSaved] = useState<Set<string>>(new Set());
@@ -406,13 +450,8 @@ function BudgetsQuickSection() {
   if (candidates.length === 0) {
     return (
       <section>
-        <SectionHeader
-          icon="savings"
-          title="Orçamentos"
-          hint="Defina um limite mensal por categoria de despesa — opcional."
-        />
         <p className="text-xs text-muted-foreground">
-          Sem categorias de despesa disponíveis ainda — crie uma acima para poder orçamentá-la.
+          Sem categorias de despesa disponíveis ainda — volte atrás e crie uma para poder orçamentá-la.
         </p>
       </section>
     );
@@ -420,11 +459,6 @@ function BudgetsQuickSection() {
 
   return (
     <section>
-      <SectionHeader
-        icon="savings"
-        title="Orçamentos"
-        hint="Defina um limite mensal por categoria de despesa — opcional, deixe em branco para ignorar."
-      />
       <div className="space-y-2">
         {candidates.map((c) => {
           const isSaved = saved.has(c.id);
