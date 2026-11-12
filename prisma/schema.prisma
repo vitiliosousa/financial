@@ -26,6 +26,7 @@ model User {
   budgets      Budget[]
   goals        Goal[]
   transfers    Transfer[]
+  loans        Loan[]
 }
 
 model Account {
@@ -43,6 +44,8 @@ model Account {
   recurring     RecurringTransaction[]
   transfersFrom Transfer[]             @relation("TransferFrom")
   transfersTo   Transfer[]             @relation("TransferTo")
+  loans         Loan[]
+  loanPayments  LoanPayment[]
 
   @@index([userId])
 }
@@ -86,6 +89,7 @@ model Transaction {
   userId      String
   type        String
   amount      Decimal  @db.Decimal(14, 2)
+  fee         Decimal  @default(0) @db.Decimal(14, 2)
   categoryId  String
   accountId   String
   date        DateTime
@@ -155,4 +159,40 @@ model Goal {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model Loan {
+  id           String    @id @default(cuid())
+  userId       String
+  accountId    String
+  direction    String // "borrowed" = pedi emprestado (devo) | "lent" = emprestei (devem-me)
+  counterparty String
+  principal    Decimal   @db.Decimal(14, 2)
+  interestRate Decimal   @default(0) @db.Decimal(6, 2)
+  date         DateTime
+  dueDate      DateTime?
+  description  String?
+  createdAt    DateTime  @default(now())
+
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account  Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  payments LoanPayment[]
+
+  @@index([userId])
+  @@index([accountId])
+}
+
+model LoanPayment {
+  id        String   @id @default(cuid())
+  loanId    String
+  accountId String
+  amount    Decimal  @db.Decimal(14, 2)
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  loan    Loan    @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([loanId])
+  @@index([accountId])
 }

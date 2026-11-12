@@ -46,6 +46,8 @@ function TransactionForm({ transaction, onClose }: { transaction?: Transaction; 
   const [accountId, setAccountId] = useState(transaction?.accountId ?? accounts[0]?.id ?? "");
   const [date, setDate] = useState(transaction ? formatDateInput(transaction.date) : formatDateInput(new Date()));
   const [description, setDescription] = useState(transaction?.description ?? "");
+  const [fee, setFee] = useState(transaction ? String(transaction.fee) : "");
+  const [showFee, setShowFee] = useState((transaction?.fee ?? 0) > 0);
 
   const filteredCategories = categories.filter((c) => c.type === type);
 
@@ -65,6 +67,7 @@ function TransactionForm({ transaction, onClose }: { transaction?: Transaction; 
     const payload = {
       type,
       amount: Number(amount) || 0,
+      fee: Number(fee) || 0,
       categoryId,
       accountId,
       date,
@@ -150,6 +153,52 @@ function TransactionForm({ transaction, onClose }: { transaction?: Transaction; 
         <Label htmlFor="tx-date">Data</Label>
         <Input id="tx-date" type="date" required value={date} onChange={(e) => setDate(e.target.value)} />
       </div>
+
+      {type === "expense" && (
+        <div>
+          {showFee ? (
+            <div className="flex items-end gap-2">
+              <div className="min-w-0 flex-1">
+                <Label htmlFor="tx-fee">Taxa / comissão (opcional)</Label>
+                <Input
+                  id="tx-fee"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0,00"
+                  value={fee}
+                  onChange={(e) => setFee(e.target.value)}
+                />
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="mb-0.5 shrink-0 text-muted-foreground"
+                onClick={() => {
+                  setFee("");
+                  setShowFee(false);
+                }}
+              >
+                Remover
+              </Button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowFee(true)}
+              className="text-xs font-medium text-accent transition-colors hover:underline"
+            >
+              + Adicionar taxa (ex: comissão M-Pesa ou banco)
+            </button>
+          )}
+          {showFee && (
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              Cobrada pela operação — é descontada do saldo além do valor da compra.
+            </p>
+          )}
+        </div>
+      )}
 
       <div>
         <Label htmlFor="tx-description">Descrição (opcional)</Label>

@@ -94,9 +94,10 @@ export default function ReportsPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard label="Receitas totais" value={formatCurrency(summary.income)} icon="trending_up" tone="success" />
         <StatCard label="Despesas totais" value={formatCurrency(summary.expense)} icon="trending_down" tone="danger" />
+        <StatCard label="Taxas pagas" value={formatCurrency(summary.fees)} icon="percent" tone="info" />
         <StatCard label="Fluxo de caixa" value={formatCurrency(summary.saved)} icon="account_balance_wallet" tone="primary" />
         <StatCard
           label="Taxa de poupança"

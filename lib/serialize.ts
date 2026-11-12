@@ -4,6 +4,8 @@ import type {
   Budget as BudgetRow,
   Category as CategoryRow,
   Goal as GoalRow,
+  Loan as LoanRow,
+  LoanPayment as LoanPaymentRow,
   RecurringTransaction as RecurringRow,
   Transaction as TransactionRow,
   Transfer as TransferRow,
@@ -14,6 +16,8 @@ import type {
   Category,
   Goal,
   IconName,
+  Loan,
+  LoanPayment,
   RecurringTransaction,
   Transaction,
   Transfer,
@@ -46,6 +50,7 @@ export function serializeTransaction(row: TransactionRow): Transaction {
     id: row.id,
     type: row.type as Transaction["type"],
     amount: Number(row.amount),
+    fee: Number(row.fee),
     categoryId: row.categoryId,
     accountId: row.accountId,
     date: toDateOnlyString(row.date),
@@ -102,5 +107,30 @@ export function serializeGoal(row: GoalRow): Goal {
     currentAmount: Number(row.currentAmount),
     deadline: row.deadline ? toDateOnlyString(row.deadline) : undefined,
     createdAt: toDateOnlyString(row.createdAt),
+  };
+}
+
+export function serializeLoanPayment(row: LoanPaymentRow): LoanPayment {
+  return {
+    id: row.id,
+    loanId: row.loanId,
+    accountId: row.accountId,
+    amount: Number(row.amount),
+    date: toDateOnlyString(row.date),
+  };
+}
+
+export function serializeLoan(row: LoanRow & { payments?: LoanPaymentRow[] }): Loan {
+  return {
+    id: row.id,
+    direction: row.direction as Loan["direction"],
+    counterparty: row.counterparty,
+    principal: Number(row.principal),
+    interestRate: Number(row.interestRate),
+    accountId: row.accountId,
+    date: toDateOnlyString(row.date),
+    dueDate: row.dueDate ? toDateOnlyString(row.dueDate) : undefined,
+    description: row.description ?? undefined,
+    payments: (row.payments ?? []).map(serializeLoanPayment),
   };
 }

@@ -12,6 +12,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Transações", href: "/transactions", icon: "sync_alt" },
   { label: "Orçamentos", href: "/budgets", icon: "savings" },
   { label: "Metas", href: "/goals", icon: "flag" },
+  { label: "Empréstimos", href: "/loans", icon: "handshake" },
   { label: "Relatórios", href: "/reports", icon: "monitoring" },
 ];
 
@@ -69,6 +70,7 @@ export const MOBILE_NAV_ENTRIES: MobileNavEntry[] = [
       { href: "/categories", label: "Categorias", icon: "sell" },
       { href: "/budgets", label: "Orçamentos", icon: "savings" },
       { href: "/goals", label: "Metas", icon: "flag" },
+      { href: "/loans", label: "Empréstimos", icon: "handshake" },
     ],
   },
   { type: "link", href: "/reports", label: "Relatórios", icon: "monitoring" },

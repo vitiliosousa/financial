@@ -15,6 +15,10 @@ export function TransactionRow({
   actions?: React.ReactNode;
 }) {
   const isIncome = transaction.type === "income";
+  // Total líquido: inclui a taxa nas despesas (é o que sai da conta).
+  const netAmount = isIncome
+    ? transaction.amount - transaction.fee
+    : transaction.amount + transaction.fee;
   return (
     <div className="group flex items-center gap-3 rounded-[var(--radius-md)] px-2 py-2.5 transition-colors hover:bg-surface-hover">
       <IconBadge icon={category?.icon ?? "coins"} color={category?.color ?? "#6b7280"} size="sm" />
@@ -24,6 +28,12 @@ export function TransactionRow({
         </p>
         <p className="truncate text-xs text-muted-foreground">
           {category?.name} &middot; {account?.name} &middot; {formatDate(transaction.date)}
+          {transaction.fee > 0 && (
+            <>
+              {" "}
+              &middot; taxa {formatCurrency(transaction.fee)}
+            </>
+          )}
         </p>
       </div>
       <p
@@ -33,7 +43,7 @@ export function TransactionRow({
         )}
       >
         {isIncome ? "+" : "-"}
-        {formatCurrency(transaction.amount)}
+        {formatCurrency(netAmount)}
       </p>
       {actions && (
         <div className="flex shrink-0 items-center opacity-0 transition-opacity group-hover:opacity-100">

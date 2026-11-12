@@ -1,31 +1,45 @@
 import { parseLocalDate } from "./date";
-import type { Account, Budget, Category, Goal, Transaction, Transfer } from "./types";
+import type { Account, Budget, Category, Goal, Loan, Transaction, Transfer } from "./types";
 
 export function getAccountBalance(
   account: Account,
   transactions: Transaction[],
-  transfers: Transfer[] = []
+  transfers: Transfer[] = [],
+  loans: Loan[] = []
 ): number {
   const txDelta = transactions
     .filter((t) => t.accountId === account.id)
-    .reduce((sum, t) => sum + (t.type === "income" ? t.amount : -t.amount), 0);
+    // A taxa é um custo real que sai da conta, seja despesa ou receita —
+    // em ambos os casos o saldo líquido é valor ∓ taxa.
+    .reduce((sum, t) => sum + (t.type === "income" ? t.amount : -t.amount) - t.fee, 0);
   const transferDelta = transfers.reduce((sum, t) => {
     if (t.fromId === account.id) return sum - t.amount - t.fee;
     if (t.toId === account.id) return sum + t.amount;
     return sum;
   }, 0);
-  return account.initialBalance + txDelta + transferDelta;
+  // Receber um empréstimo (borrowed) entra na conta; conceder (lent) sai.
+  // Os pagamentos fazem o movimento inverso na conta em que foram feitos.
+  const loanDelta = loans.reduce((sum, l) => {
+    let delta = 0;
+    if (l.accountId === account.id) delta += l.direction === "borrowed" ? l.principal : -l.principal;
+    for (const p of l.payments) {
+      if (p.accountId === account.id) delta += l.direction === "borrowed" ? -p.amount : p.amount;
+    }
+    return sum + delta;
+  }, 0);
+  return account.initialBalance + txDelta + transferDelta + loanDelta;
 }
 
 export function getTotalBalance(
   accounts: Account[],
   transactions: Transaction[],
-  transfers: Transfer[] = []
+  transfers: Transfer[] = [],
+  loans: Loan[] = []
 ): number {
   // Transfers move money between the user's own accounts, so the amount
   // nets to zero across the combined total — but any fee is a real cost
   // that leaves the total, deducted from the source account above.
-  return accounts.reduce((sum, a) => sum + getAccountBalance(a, transactions, transfers), 0);
+  return accounts.reduce((sum, a) => sum + getAccountBalance(a, transactions, transfers, loans), 0);
 }
 
 export function isInMonth(dateStr: string, month: number, year: number): boolean {
@@ -49,6 +63,7 @@ export function getTransactionsForMonth(
 export interface MonthSummary {
   income: number;
   expense: number;
+  fees: number;
   saved: number;
   savingsRate: number;
 }
@@ -56,13 +71,15 @@ export interface MonthSummary {
 export function getMonthSummary(transactions: Transaction[]): MonthSummary {
   const income = transactions
     .filter((t) => t.type === "income")
-    .reduce((sum, t) => sum + t.amount, 0);
+    .reduce((sum, t) => sum + t.amount - t.fee, 0);
+  // A despesa total inclui a taxa: é o que realmente saiu do bolso.
   const expense = transactions
     .filter((t) => t.type === "expense")
-    .reduce((sum, t) => sum + t.amount, 0);
+    .reduce((sum, t) => sum + t.amount + t.fee, 0);
+  const fees = transactions.reduce((sum, t) => sum + t.fee, 0);
   const saved = income - expense;
   const savingsRate = income > 0 ? (saved / income) * 100 : 0;
-  return { income, expense, saved, savingsRate };
+  return { income, expense, fees, saved, savingsRate };
 }
 
 export interface CategoryBreakdownItem {
@@ -128,7 +145,10 @@ export function getBalanceEvolution(
     const upToMonth = sorted.filter((t) => parseLocalDate(t.date) <= monthEnd);
     const balance =
       initialTotal +
-      upToMonth.reduce((sum, t) => sum + (t.type === "income" ? t.amount : -t.amount), 0);
+      upToMonth.reduce(
+        (sum, t) => sum + (t.type === "income" ? t.amount : -t.amount) - t.fee,
+        0
+      );
 
     const monthTx = getTransactionsForMonth(transactions, d.getMonth(), d.getFullYear());
     const { income, expense } = getMonthSummary(monthTx);
@@ -261,6 +281,33 @@ export function getGoalProgress(goal: Goal, referenceDate: Date = new Date()): G
     monthlyPaceEstimate,
     estimatedCompletionLabel,
     isCompleted,
+    isOverdue,
+  };
+}
+
+export interface LoanSummary {
+  loan: Loan;
+  totalDue: number; // capital + juro simples
+  paid: number;
+  remaining: number;
+  percentage: number;
+  isSettled: boolean;
+  isOverdue: boolean;
+}
+
+export function getLoanSummary(loan: Loan, referenceDate: Date = new Date()): LoanSummary {
+  const totalDue = loan.principal * (1 + loan.interestRate / 100);
+  const paid = loan.payments.reduce((sum, p) => sum + p.amount, 0);
+  const remaining = Math.max(0, totalDue - paid);
+  const isSettled = remaining <= 0.005;
+  const isOverdue = !isSettled && !!loan.dueDate && parseLocalDate(loan.dueDate) < referenceDate;
+  return {
+    loan,
+    totalDue,
+    paid,
+    remaining,
+    percentage: totalDue > 0 ? Math.min(100, (paid / totalDue) * 100) : 0,
+    isSettled,
     isOverdue,
   };
 }

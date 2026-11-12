@@ -11,6 +11,8 @@ import type {
   Budget,
   Category,
   Goal,
+  Loan,
+  LoanPayment,
   RecurringTransaction,
   Transaction,
   Transfer,
@@ -32,6 +34,13 @@ import {
   deleteGoalAction,
   updateGoalAction,
 } from "./actions/goals";
+import {
+  addLoanPaymentAction,
+  createLoanAction,
+  deleteLoanAction,
+  deleteLoanPaymentAction,
+  updateLoanAction,
+} from "./actions/loans";
 import { updateProfileAction } from "./actions/user";
 
 function tempId(prefix: string) {
@@ -50,6 +59,7 @@ interface FinanceState {
   transfers: Transfer[];
   budgets: Budget[];
   goals: Goal[];
+  loans: Loan[];
   user: UserProfile;
 
   addAccount: (account: Omit<Account, "id" | "createdAt">) => void;
@@ -79,6 +89,12 @@ interface FinanceState {
   updateGoal: (id: string, goal: Partial<Omit<Goal, "id">>) => void;
   deleteGoal: (id: string) => void;
   contributeToGoal: (id: string, amount: number) => void;
+
+  addLoan: (loan: Omit<Loan, "id" | "payments">) => void;
+  updateLoan: (id: string, loan: Omit<Loan, "id" | "payments">) => void;
+  deleteLoan: (id: string) => void;
+  addLoanPayment: (loanId: string, payment: Omit<LoanPayment, "id" | "loanId">) => void;
+  deleteLoanPayment: (loanId: string, paymentId: string) => void;
 
   updateUser: (user: Partial<UserProfile>) => void;
 }
@@ -113,6 +129,7 @@ function createFinanceStore(initial: UserFinanceData) {
         transactions: state.transactions.filter((t) => t.accountId !== id),
         recurringTransactions: state.recurringTransactions.filter((r) => r.accountId !== id),
         transfers: state.transfers.filter((t) => t.fromId !== id && t.toId !== id),
+        loans: state.loans.filter((l) => l.accountId !== id),
       }));
       deleteAccountAction(id).catch((err) => {
         set({
@@ -120,6 +137,7 @@ function createFinanceStore(initial: UserFinanceData) {
           transactions: previous.transactions,
           recurringTransactions: previous.recurringTransactions,
           transfers: previous.transfers,
+          loans: previous.loans,
         });
         reportError(err, "Erro ao eliminar conta.");
       });
@@ -325,6 +343,66 @@ function createFinanceStore(initial: UserFinanceData) {
           set({ goals: previous });
           reportError(err, "Erro ao adicionar fundos à meta.");
         });
+    },
+
+    addLoan: (loan) => {
+      const id = tempId("loan");
+      const optimistic: Loan = { ...loan, id, payments: [] };
+      set((state) => ({ loans: [optimistic, ...state.loans] }));
+      createLoanAction(loan)
+        .then((real) => set((state) => ({ loans: state.loans.map((l) => (l.id === id ? real : l)) })))
+        .catch((err) => {
+          set((state) => ({ loans: state.loans.filter((l) => l.id !== id) }));
+          reportError(err, "Erro ao criar empréstimo.");
+        });
+    },
+    updateLoan: (id, loan) => {
+      const previous = get().loans;
+      set((state) => ({ loans: state.loans.map((l) => (l.id === id ? { ...l, ...loan } : l)) }));
+      updateLoanAction(id, loan).catch((err) => {
+        set({ loans: previous });
+        reportError(err, "Erro ao atualizar empréstimo.");
+      });
+    },
+    deleteLoan: (id) => {
+      const previous = get().loans;
+      set((state) => ({ loans: state.loans.filter((l) => l.id !== id) }));
+      deleteLoanAction(id).catch((err) => {
+        set({ loans: previous });
+        reportError(err, "Erro ao eliminar empréstimo.");
+      });
+    },
+    addLoanPayment: (loanId, payment) => {
+      const previous = get().loans;
+      const id = tempId("loanpay");
+      const optimistic: LoanPayment = { ...payment, id, loanId };
+      set((state) => ({
+        loans: state.loans.map((l) => (l.id === loanId ? { ...l, payments: [...l.payments, optimistic] } : l)),
+      }));
+      addLoanPaymentAction(loanId, payment)
+        .then((real) =>
+          set((state) => ({
+            loans: state.loans.map((l) =>
+              l.id === loanId ? { ...l, payments: l.payments.map((p) => (p.id === id ? real : p)) } : l
+            ),
+          }))
+        )
+        .catch((err) => {
+          set({ loans: previous });
+          reportError(err, "Erro ao registar pagamento.");
+        });
+    },
+    deleteLoanPayment: (loanId, paymentId) => {
+      const previous = get().loans;
+      set((state) => ({
+        loans: state.loans.map((l) =>
+          l.id === loanId ? { ...l, payments: l.payments.filter((p) => p.id !== paymentId) } : l
+        ),
+      }));
+      deleteLoanPaymentAction(paymentId).catch((err) => {
+        set({ loans: previous });
+        reportError(err, "Erro ao eliminar pagamento.");
+      });
     },
 
     updateUser: (user) => {

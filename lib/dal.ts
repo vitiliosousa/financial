@@ -5,6 +5,7 @@ import {
   serializeBudget,
   serializeCategory,
   serializeGoal,
+  serializeLoan,
   serializeRecurring,
   serializeTransaction,
   serializeTransfer,
@@ -14,6 +15,7 @@ import type {
   Budget,
   Category,
   Goal,
+  Loan,
   RecurringTransaction,
   Transaction,
   Transfer,
@@ -29,13 +31,14 @@ export interface UserFinanceData {
   transfers: Transfer[];
   budgets: Budget[];
   goals: Goal[];
+  loans: Loan[];
 }
 
 // Returns null if userId doesn't match a real user — e.g. a session cookie
 // left over from a deleted account. Callers should treat that as a signal
 // to clear the stale session rather than crash.
 export async function getUserFinanceData(userId: string): Promise<UserFinanceData | null> {
-  const [user, accounts, categories, transactions, recurring, transfers, budgets, goals] =
+  const [user, accounts, categories, transactions, recurring, transfers, budgets, goals, loans] =
     await Promise.all([
       prisma.user.findUnique({ where: { id: userId } }),
       prisma.account.findMany({ where: { userId }, orderBy: { createdAt: "asc" } }),
@@ -45,6 +48,7 @@ export async function getUserFinanceData(userId: string): Promise<UserFinanceDat
       prisma.transfer.findMany({ where: { userId }, orderBy: { date: "desc" } }),
       prisma.budget.findMany({ where: { userId } }),
       prisma.goal.findMany({ where: { userId }, orderBy: { createdAt: "asc" } }),
+      prisma.loan.findMany({ where: { userId }, include: { payments: true }, orderBy: { date: "desc" } }),
     ]);
 
   if (!user) return null;
@@ -58,5 +62,6 @@ export async function getUserFinanceData(userId: string): Promise<UserFinanceDat
     transfers: transfers.map(serializeTransfer),
     budgets: budgets.map(serializeBudget),
     goals: goals.map(serializeGoal),
+    loans: loans.map(serializeLoan),
   };
 }

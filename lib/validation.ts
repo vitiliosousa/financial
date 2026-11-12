@@ -25,6 +25,7 @@ export const categoryInputSchema = z.object({
 export const transactionInputSchema = z.object({
   type: transactionTypeSchema,
   amount: z.number().positive(),
+  fee: z.number().min(0).default(0),
   categoryId: z.string().min(1),
   accountId: z.string().min(1),
   date: dateOnlySchema,
@@ -58,6 +59,23 @@ export const transferInputSchema = z
     message: "A conta de origem e destino devem ser diferentes.",
     path: ["toId"],
   });
+
+export const loanInputSchema = z.object({
+  direction: z.enum(["borrowed", "lent"]),
+  counterparty: z.string().trim().min(1).max(80),
+  principal: z.number().positive(),
+  interestRate: z.number().min(0).max(1000).default(0),
+  accountId: z.string().min(1),
+  date: dateOnlySchema,
+  dueDate: dateOnlySchema.optional(),
+  description: z.string().trim().max(200).optional(),
+});
+
+export const loanPaymentInputSchema = z.object({
+  accountId: z.string().min(1),
+  amount: z.number().positive(),
+  date: dateOnlySchema,
+});
 
 export const budgetInputSchema = z.object({
   categoryId: z.string().min(1),

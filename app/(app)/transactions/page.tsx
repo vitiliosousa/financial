@@ -130,7 +130,10 @@ export default function TransactionsPage() {
   }, [transactions, categories, type, categoryId, accountId, search, period, customRange, sortBy]);
 
   const totalIncome = filtered.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
-  const totalExpense = filtered.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
+  // A despesa total inclui a taxa — é o que realmente saiu da conta.
+  const totalExpense = filtered
+    .filter((t) => t.type === "expense")
+    .reduce((s, t) => s + t.amount + t.fee, 0);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -386,6 +389,8 @@ export default function TransactionsPage() {
                 const category = categories.find((c) => c.id === t.categoryId);
                 const account = accounts.find((a) => a.id === t.accountId);
                 const isIncome = t.type === "income";
+                // Total líquido: inclui a taxa nas despesas.
+                const netAmount = isIncome ? t.amount - t.fee : t.amount + t.fee;
                 return (
                   <div
                     key={t.id}
@@ -400,6 +405,12 @@ export default function TransactionsPage() {
                       <div className="mt-0.5 flex items-center justify-between gap-2">
                         <p className="min-w-0 truncate text-xs text-muted-foreground">
                           {category?.name} &middot; {account?.name} &middot; {formatDate(t.date)}
+                          {t.fee > 0 && (
+                            <>
+                              {" "}
+                              &middot; taxa {formatCurrency(t.fee)}
+                            </>
+                          )}
                         </p>
                         <p
                           className={cn(
@@ -408,7 +419,7 @@ export default function TransactionsPage() {
                           )}
                         >
                           {isIncome ? "+" : "-"}
-                          {formatCurrency(t.amount)}
+                          {formatCurrency(netAmount)}
                         </p>
                       </div>
                     </div>
@@ -419,7 +430,7 @@ export default function TransactionsPage() {
                       )}
                     >
                       {isIncome ? "+" : "-"}
-                      {formatCurrency(t.amount)}
+                      {formatCurrency(netAmount)}
                     </p>
                     <div className="hidden shrink-0 items-center gap-1 sm:flex sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100">
                       <Button

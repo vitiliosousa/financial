@@ -18,6 +18,7 @@ export default function AccountsPage() {
   const accounts = useFinanceStore((s) => s.accounts);
   const transactions = useFinanceStore((s) => s.transactions);
   const transfers = useFinanceStore((s) => s.transfers);
+  const loans = useFinanceStore((s) => s.loans);
   const deleteAccount = useFinanceStore((s) => s.deleteAccount);
   const deleteTransfer = useFinanceStore((s) => s.deleteTransfer);
   const showToast = useToastStore((s) => s.show);
@@ -31,7 +32,7 @@ export default function AccountsPage() {
   const TRANSFERS_PREVIEW = 5;
   const visibleTransfers = showAllTransfers ? transfers : transfers.slice(0, TRANSFERS_PREVIEW);
 
-  const totalBalance = accounts.reduce((sum, a) => sum + getAccountBalance(a, transactions, transfers), 0);
+  const totalBalance = accounts.reduce((sum, a) => sum + getAccountBalance(a, transactions, transfers, loans), 0);
   const accountName = (id: string) => accounts.find((a) => a.id === id)?.name ?? "Conta eliminada";
 
   function openCreate() {
@@ -84,7 +85,7 @@ export default function AccountsPage() {
             <AccountCard
               key={account.id}
               account={account}
-              balance={getAccountBalance(account, transactions, transfers)}
+              balance={getAccountBalance(account, transactions, transfers, loans)}
               onEdit={() => openEdit(account)}
               onDelete={() => setDeleting(account)}
             />

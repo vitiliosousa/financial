@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import { MaterialIcon } from "@/components/ui/material-icon";
 
 export default function DashboardPage() {
-  const { accounts, categories, transactions, transfers, budgets, goals } = useFinanceStore((s) => s);
+  const { accounts, categories, transactions, transfers, budgets, goals, loans } = useFinanceStore((s) => s);
 
   const now = new Date();
   const month = now.getMonth();
@@ -34,7 +34,7 @@ export default function DashboardPage() {
 
   const monthTransactions = getTransactionsForMonth(transactions, month, year);
   const summary = getMonthSummary(monthTransactions);
-  const totalBalance = getTotalBalance(accounts, transactions, transfers);
+  const totalBalance = getTotalBalance(accounts, transactions, transfers, loans);
   const evolution = getBalanceEvolution(accounts, transactions, 6);
   const categoryBreakdown = getCategoryBreakdown(monthTransactions, categories, "expense");
 

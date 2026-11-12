@@ -52,6 +52,7 @@ export interface Transaction {
   id: string;
   type: TransactionType;
   amount: number;
+  fee: number; // taxa/comissão cobrada pela operação (ex: comissão M-Pesa)
   categoryId: string;
   accountId: string;
   date: string; // ISO date string
@@ -81,6 +82,29 @@ export interface Transfer {
   fee: number;
   date: string; // ISO date string
   description?: string;
+}
+
+export type LoanDirection = "borrowed" | "lent";
+
+export interface LoanPayment {
+  id: string;
+  loanId: string;
+  accountId: string;
+  amount: number;
+  date: string;
+}
+
+export interface Loan {
+  id: string;
+  direction: LoanDirection; // borrowed = devo | lent = devem-me
+  counterparty: string;
+  principal: number;
+  interestRate: number; // juro simples total, em %
+  accountId: string; // conta onde o dinheiro entrou/saiu
+  date: string;
+  dueDate?: string;
+  description?: string;
+  payments: LoanPayment[];
 }
 
 export interface Budget {
