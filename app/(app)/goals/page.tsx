@@ -6,6 +6,7 @@ import { useToastStore } from "@/lib/toast-store";
 import { getGoalProgress } from "@/lib/calculations";
 import { formatCurrency, formatDate } from "@/lib/format";
 import type { Goal } from "@/lib/types";
+import { PlanningTabs } from "@/components/layout/section-tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +41,7 @@ export default function GoalsPage() {
 
   return (
     <div className="space-y-6">
+      <PlanningTabs />
       <div className="flex items-center justify-end">
         <Button onClick={openCreate}>
           <MaterialIcon name="add" size={18} />

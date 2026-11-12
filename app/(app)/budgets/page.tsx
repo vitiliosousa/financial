@@ -7,6 +7,7 @@ import { useToastStore } from "@/lib/toast-store";
 import { getBudgetUsage } from "@/lib/calculations";
 import { formatCurrency, formatFullMonthLabel } from "@/lib/format";
 import type { Budget } from "@/lib/types";
+import { PlanningTabs } from "@/components/layout/section-tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -49,6 +50,7 @@ export default function BudgetsPage() {
 
   return (
     <div className="space-y-6">
+      <PlanningTabs />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm text-muted-foreground">Orçamentos de {formatFullMonthLabel(now.getMonth(), now.getFullYear())}</p>

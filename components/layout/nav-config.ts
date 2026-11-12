@@ -22,61 +22,31 @@ export const SETTINGS_ITEM: NavItem = {
   icon: "settings",
 };
 
-export interface NavGroupOption {
-  href: string;
-  label: string;
-  icon: string;
-}
-
 export interface MobileNavLink {
-  type: "link";
   href: string;
   label: string;
   icon: string;
+  // Other routes that belong to the same tab (shown as tabs inside the page).
+  matches: string[];
 }
 
-export interface MobileNavGroup {
-  type: "group";
-  label: string;
-  icon: string;
-  options: NavGroupOption[];
-}
-
-export type MobileNavEntry = MobileNavLink | MobileNavGroup;
-
-// Bottom nav on mobile only has room for a handful of items. Dashboard and
-// Relatórios are direct links; the rest are grouped by context behind a
-// bottom sheet the user picks from — "Movimento" (Contas, Transações —
-// Recorrentes is already one tab away from Transações, so it doesn't need
-// its own entry here) and "Planeamento" (Categorias, Orçamentos, Metas) —
-// rather than being merged into one another as tabs. The four entries
-// split two-and-two around the centered "+" quick-add button.
-export const MOBILE_NAV_ENTRIES: MobileNavEntry[] = [
-  { type: "link", href: "/dashboard", label: "Início", icon: "space_dashboard" },
+// Five slots around the centered "+" button. Every slot is a real page —
+// secondary destinations live as tabs inside it (Contas | Empréstimos,
+// Orçamentos | Metas, Transações | Recorrentes | Categorias) instead of
+// behind a sheet. Relatórios is reached from the topbar and the dashboard.
+export const MOBILE_NAV_ENTRIES: MobileNavLink[] = [
+  { href: "/dashboard", label: "Início", icon: "space_dashboard", matches: ["/dashboard"] },
   {
-    type: "group",
-    label: "Movimento",
+    href: "/transactions",
+    label: "Transações",
     icon: "sync_alt",
-    options: [
-      { href: "/accounts", label: "Contas", icon: "account_balance_wallet" },
-      { href: "/transactions", label: "Transações", icon: "sync_alt" },
-    ],
+    matches: ["/transactions", "/categories"],
   },
-  {
-    type: "group",
-    label: "Planeamento",
-    icon: "savings",
-    options: [
-      { href: "/categories", label: "Categorias", icon: "sell" },
-      { href: "/budgets", label: "Orçamentos", icon: "savings" },
-      { href: "/goals", label: "Metas", icon: "flag" },
-      { href: "/loans", label: "Empréstimos", icon: "handshake" },
-    ],
-  },
-  { type: "link", href: "/reports", label: "Relatórios", icon: "monitoring" },
+  { href: "/accounts", label: "Contas", icon: "account_balance_wallet", matches: ["/accounts", "/loans"] },
+  { href: "/budgets", label: "Planeamento", icon: "flag", matches: ["/budgets", "/goals"] },
 ];
 
-// Only Settings isn't reachable from the bottom nav at all (it lives behind
-// the header avatar), so it's the only page that gets a back arrow. The
+// Settings (header avatar) and Relatórios (header icon) aren't in the bottom
+// nav, so they get a back arrow. The
 // bottom nav's own "Início" button is always visible everywhere else.
-export const SECONDARY_HREFS = ["/settings"];
+export const SECONDARY_HREFS = ["/settings", "/reports"];

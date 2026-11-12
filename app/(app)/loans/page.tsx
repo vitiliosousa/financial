@@ -6,6 +6,7 @@ import { useToastStore } from "@/lib/toast-store";
 import { getLoanSummary } from "@/lib/calculations";
 import { formatCurrency, formatDate } from "@/lib/format";
 import type { Loan } from "@/lib/types";
+import { AccountsTabs } from "@/components/layout/section-tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +42,7 @@ export default function LoansPage() {
 
   return (
     <div className="space-y-6">
+      <AccountsTabs />
       <div className="flex items-center justify-end">
         <Button onClick={openCreate}>
           <MaterialIcon name="add" size={18} />

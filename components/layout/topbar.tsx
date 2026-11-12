@@ -57,6 +57,15 @@ export function Topbar() {
         >
           <MaterialIcon name={theme === "dark" ? "light_mode" : "dark_mode"} size={19} />
         </Button>
+        {pathname !== "/reports" && (
+          <Link
+            href="/reports"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground lg:hidden"
+            aria-label="Relatórios"
+          >
+            <NavLinkIcon name="monitoring" size={19} />
+          </Link>
+        )}
         {!isSettings && (
           <Link
             href="/settings"

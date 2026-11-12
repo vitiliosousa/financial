@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useFinanceStore } from "@/lib/store";
 import { useToastStore } from "@/lib/toast-store";
 import type { Category, TransactionType } from "@/lib/types";
+import { TransactionsTabs } from "@/components/transactions/transactions-tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { IconBadge } from "@/components/ui/icon-badge";
@@ -44,6 +45,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="space-y-6">
+      <TransactionsTabs />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex w-fit gap-1 rounded-[var(--radius-md)] border border-border bg-surface p-1">
           {(
